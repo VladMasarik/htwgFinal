@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<title>Gitistics</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load static %}
+<link rel="stylesheet" href="{% static 'gitistics/style.css' %}">
+<body>
+
+    <h3>Take 1</h3>
+
+    <h1>Search:</h1>
+    <br>
+    <form action="{% url 'gitistics:index' %}" method="GET">
+        <input type="text" name="search_term" class="form-control">
+        <input type="submit" value="Search repositories">
+    </form>
+    <br>
+
+
+    <h3>Take 2</h3>
+
+    <img class="avatar" src="{{ data.avatar_url }}" width="200" height="200">
+    <br>
+    {{ data.name }}
+    <br>
+    {{ data.location }}
+    <br>
+    Public Repos: {{ data.public_repos }}
+    <br>
+    Followers
+    {{ data.followers }}
+    <br> 
+    Following: {{ data.following }}
+    
+</body>
+</html>
