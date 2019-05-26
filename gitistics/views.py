@@ -1,12 +1,8 @@
-# Create your views here.
-from django.shortcuts import render
 from django.shortcuts import render, HttpResponse
 import requests
 from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
 
-#Take1
-'''
 class IndexView(View):
     
     template_name = 'gitistics/index.html'
@@ -28,11 +24,14 @@ class IndexView(View):
                 'data': data,
             }
             return render(request, self.template_name, context)
-'''
 
 #Take2
 def index(request):
-    userData = requests.get('https://api.github.com/users/kubernetes')
+    repository = request.GET.get("repository")
+    if repository is None:
+        return render(request, 'gitistics/index.html', {'data': None})
+    userData = requests.get('https://api.github.com/users/{}'.format(repository))
+    
     dataList = []
     dataList.append(userData.json())
     cleanedData = []
