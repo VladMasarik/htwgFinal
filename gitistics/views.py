@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render, HttpResponse
-import requests
+import requests, json, boto3
 from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
 
@@ -82,10 +82,36 @@ def statistics(request):
 
     return render(request, 'gitistics/statistics.html', {'data': userStats})
 
-'''
+
 def search(request):
-    return render(request, 'gitistics/search.html')
-'''
+    repo = request.GET.get("search_term")
+    repos = []
+    if repo is not None:
+
+        db = boto3.resource('dynamodb')
+        table = db.Table('groups')
+        for i in table.scan()["Items"]:
+            if i["name"] == repo:
+                return render(request, 'gitistics/search.html', {"num": i["count"]})
+
+        response = requests.get(('https://api.github.com/search/repositories?q={}').format(repo))
+        response = requests.get(('https://api.github.com/users/{}/repos').format(repo))
+        repos = json.loads(response.content.decode('utf-8'))
+        #get items only and order by created_at desc
+        #resp_dict['items'] = sorted(resp_dict['items'], key=lambda x:x['created_at'], reverse=True)
+        #slice to NUMBER_OF_REPOS
+
+        table.put_item(
+                Item={
+                    "name" : repo,
+                    "count" : len(repos)
+                }
+            )
+        
+
+
+    return render(request, 'gitistics/search.html', {"num": len(repos) - 1000})
+
 
 class SearchView(View):
     
