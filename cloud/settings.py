@@ -27,7 +27,7 @@ SECRET_KEY = '(i-3&vie-3_bp(n9jcpnpmi_8v=58r=rnyzk33wzn8pmi0b#o1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
