@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
+from gitistics import views
 
 urlpatterns = [
     path('gitistics/', include('gitistics.urls')),
