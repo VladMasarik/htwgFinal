@@ -2,7 +2,7 @@ FROM python:3-slim-stretch
 
 WORKDIR /
 
-COPY htwgFinal /
+COPY ./ /
 WORKDIR /htwgFinal
 
 EXPOSE 8080
