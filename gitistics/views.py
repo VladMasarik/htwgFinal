@@ -83,34 +83,48 @@ def statistics(request):
     return render(request, 'gitistics/statistics.html', {'data': userStats})
 
 
+def collectData(action, auth = None):
+
+    req = {
+        "action": action
+    }
+
+    if auth is None:
+        auth = {
+            "user": "public",
+            "pass": "none"
+        }
+        req["publicAccount"] = "true"
+    else:
+        req["publicAccount"] = "false"
+
+
+
+
+    response = requests.post("user.default.svc.cluster.local", auth=(auth["user"], auth["pass"]) , json = req)
+    
+
+    return response.json["repositories"]
+    
+
 def search(request):
     repo = request.GET.get("search_term")
-    repos = []
+
+    auth = {
+        "user": "vlado",
+        "pass": "xxxx"
+    }
+    action = {
+        "label": "listRepo",
+        "gitUser": repo,
+    }
+
     if repo is not None:
-
-        db = boto3.resource('dynamodb')
-        table = db.Table('groups')
-        for i in table.scan()["Items"]:
-            if i["name"] == repo:
-                return render(request, 'gitistics/search.html', {"num": i["count"]})
-
-        response = requests.get(('https://api.github.com/search/repositories?q={}').format(repo))
-        response = requests.get(('https://api.github.com/users/{}/repos').format(repo))
-        repos = json.loads(response.content.decode('utf-8'))
-        #get items only and order by created_at desc
-        #resp_dict['items'] = sorted(resp_dict['items'], key=lambda x:x['created_at'], reverse=True)
-        #slice to NUMBER_OF_REPOS
-
-        table.put_item(
-                Item={
-                    "name" : repo,
-                    "count" : len(repos)
-                }
-            )
+        output = collectData(action)
         
 
 
-    return render(request, 'gitistics/search.html', {"num": len(repos) - 1000})
+    return render(request, 'gitistics/search.html', {"num": len(output) - 1000})
 
 
 class SearchView(View):

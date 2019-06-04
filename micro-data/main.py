@@ -5,11 +5,12 @@ app = Flask(__name__)
 @app.route("/")
 def hello():
 
+
     data = request.json()
-    currentUser = data["action"]["user"]
-    groupName = data["name"]
+    gitUser = data["action"]["gitUser"]
+    #groupName = data["name"]
     
-    if data["valid"] == "true":
+    if data["public"] == "false":
         db = boto3.resource('dynamodb')
         table = db.Table('groups')
         for i in table.scan()["Items"]:
@@ -22,14 +23,14 @@ def hello():
                 if data["action"]["label"] == "listRepo":
 
                     # DB has data?
-                    if currentUser in dbData:
-                        return dbData[currentUser]["repoList"]
+                    if gitUser in dbData:
+                        return dbData[gitUser]["repoList"]
                     else:
-                        response = requests.get(('https://api.github.com/users/{}/repos').format(currentUser))
+                        response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
                         repos = json.loads(response.content.decode('utf-8'))
 
                         # Update DB
-                        dbData[currentUser] = {"repoList": repos}
+                        dbData[gitUser] = {"repoList": repos}
                         table.update_item(
                             Key={
                                 "name": i["name"]
@@ -40,12 +41,20 @@ def hello():
                             }
                         )
 
-                        return dbData[currentUser]["repoList"]
+                        return dbData[gitUser]["repoList"]
     else:
-        response = requests.get(('https://api.github.com/users/{}/repos').format(currentUser))
+        response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
         repos = json.loads(response.content.decode('utf-8'))
+
+        names = []
+        for e in repos:
+            names.append(e["name"])
         
-        return repos
+        out = {
+            "repositories": names
+        }
+        
+        return out
 
             
 
