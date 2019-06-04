@@ -35,3 +35,8 @@ FLASK_APP=micro-user/main.py FLASK_DEBUG=1 flask run --debugger
 
 
 FLASK_APP=micro-data/main.py FLASK_DEBUG=1 flask run -p 5001 --debugger
+
+
+## Remake the environment
+
+oc delete -f manifests --now && oc create -f manifests && oc get po 
