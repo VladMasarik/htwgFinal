@@ -33,6 +33,10 @@ def addUser(username, password):
     resp = requests.post(microServiceURL + "/addUser", auth=(username, password) , json = {})
     return resp
 
+def authenticate(username, password):
+    #authenticated = False
+    #if  
+    return True
 
 def usersignup(request):
     registered = False
