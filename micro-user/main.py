@@ -9,6 +9,8 @@ def addUser():
     cred = request.authorization["username"] + ":" + request.authorization["password"]
     db = boto3.client('dynamodb')
     x = db.list_tables()
+
+    db = boto3.resource('dynamodb')
     table = db.Table('groups')
     table.put_item(
         Item={

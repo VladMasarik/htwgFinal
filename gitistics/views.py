@@ -1,4 +1,3 @@
-# Create your views here.
 from django.shortcuts import render, HttpResponse
 import requests, json, os
 from django.views import View
@@ -120,7 +119,6 @@ def search(request):
     repo = request.GET.get("search_term")
     username = request.COOKIES.get("username")
     password = request.COOKIES.get("password")
-    addUser("vlad", "onetwo")
     auth = {
         "user": username,
         "pass": password
