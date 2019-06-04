@@ -26,20 +26,24 @@
 </header>
 
 <!--TODO--> 
-<h1>Login here:</h1>
-
-<form method="post">
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+  <h1>Log in here:</h1>
+</div>
+<div class="w3-row w3-center w3-white w3-padding-16">
+  <form method="POST">
     {% csrf_token %}
     &emsp;<label for="username">Username:</label>
-    &emsp;<input type="text" name="username" placeholder="Username">
+    <input type="text" name="username" placeholder="Username">
     <br><br>
     &emsp;<label for="password">Password:</label>
-    &emsp;<input type="password" name="password" placeholder="Password">
+    <input type="password" name="password" placeholder="Password">
     <br><br>
-    &emsp;<input type="submit" name="" value="Login">
-</form>
-
-<!--TODO--> 
+<div>
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+    &emsp;<input type="submit" name="" value="Log in">
+</div>
+  </form>
+  <!--TODO--> 
 
 <footer class="w3-container w3-padding-64 w3-center w3-opacity">  
     <p>Cloud application development project</p>

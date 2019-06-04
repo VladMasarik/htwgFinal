@@ -26,18 +26,31 @@
 </header>
       
 <!--TODO--> 
-<h1>Signup</h1>
-
 {% if registered %}
+<div class="w3-row w3-center w3-dark-grey w3-padding-16"></div>  
   <h1>Thank you for registering!</h1>
+</div>
 {% else %}
-  <h1>Register here:</h1>
-
-<form enctype="multipart/form-data" method="POST">
-  {% csrf_token %}
-  {{ user_form.as_p }}
-  <input type="submit" name="" value="Register">
-</form>
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+  <h1>Sign up here:</h1>
+</div>   
+<div class="w3-row w3-center w3-white w3-padding-16">
+  <form method="POST">
+    {% csrf_token %}
+    <!--{{ user_form.as_p }}-->
+    &emsp;<label for="username">Username:</label>
+    <input type="text" name="username" placeholder="Username">
+    <br><br>
+    &emsp;<label for="password">Password:</label>
+    <input type="password" name="password" placeholder="Password">
+    <br><br>
+    &emsp;<label for="email">E-mail:</label>
+    <input type="text" name="email" placeholder="E-mail">
+</div>
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+    &emsp;<input type="submit" name="" value="Sign up">
+</div>
+  </form>
 {% endif %}
 <!--TODO--> 
       
