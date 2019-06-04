@@ -23,9 +23,7 @@ def hello():
                 if data["action"]["label"] == "listRepo":
 
                     # DB has data?
-                    if gitUser in dbData:
-                        return dbData[gitUser]["repoList"]
-                    else:
+                    if gitUser not in dbData:
                         response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
                         repos = json.loads(response.content.decode('utf-8'))
 
@@ -41,7 +39,7 @@ def hello():
                             }
                         )
 
-                        return dbData[gitUser]["repoList"]
+                    return jsonify({"repositories": dbData[gitUser]["repoList"]})
     else:
         response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
         repos = json.loads(response.content.decode('utf-8'))

@@ -120,7 +120,7 @@ def search(request):
     repo = request.GET.get("search_term")
     username = request.COOKIES.get("username")
     password = request.COOKIES.get("password")
-
+    addUser("vlad", "onetwo")
     auth = {
         "user": username,
         "pass": password

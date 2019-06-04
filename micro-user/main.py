@@ -2,6 +2,39 @@ from flask import Flask, request, jsonify
 import boto3, requests, os
 app = Flask(__name__)
 
+
+@app.route("/addUser", methods=['GET', 'POST'])
+def addUser():
+        
+    cred = request.authorization["username"] + ":" + request.authorization["password"]
+    db = boto3.client('dynamodb')
+    x = db.list_tables()
+    table = db.Table('groups')
+    table.put_item(
+        Item={
+            "name": request.authorization["username"],
+            "groupUsers": [cred],
+            "data": {}
+        }
+    )
+
+    return jsonify({"result": "true"})
+
+
+
+
+def authenticate(username, password):
+    cred = username + ":" + password
+    db = boto3.resource('dynamodb')
+    table = db.Table('groups')
+    for group in table.scan()["Items"]:
+        if cred in group["groupUsers"]:
+            return group
+    return None
+    
+
+
+
 @app.route("/", methods=['GET', 'POST'])
 def userService():
     microServiceURL = None
@@ -10,32 +43,27 @@ def userService():
     else:
         microServiceURL = "http://data.default.svc.cluster.local"
     data = request.json
-    cred = request.authorization["username"] + ":" request.authorization["password"]
+    
     
     if data["publicAccount"] == "false":
-        db = boto3.resource('dynamodb')
-        table = db.Table('groups')
-        for i in table.scan()["Items"]:
-
-            if cred in i["groupUsers"]:
-                req = {
-                    "public": "false",
-                    "groupName": i["name"],
-                    "action": data["action"]
-                }
-                return requests.post(microServiceURL, json = req)
-        return jsonify({"error": "UserUnknown"})
+        group = authenticate(request.authorization["username"], request.authorization["password"])
+        if group in None:
+            return jsonify({"error": "UserUnknown"})
+        else:
+            req = {
+                "public": "false",
+                "groupName": group["name"],
+                "action": data["action"]
+            }
+            return requests.post(microServiceURL, json = req)
     else:
         req = {
-                    "public": "true",
-                    "action": data["action"]
-                }
+            "public": "true",
+            "action": data["action"]
+        }
 
-        
-        # data.default.svc.cluster.local
         resp = requests.post(microServiceURL, json = req)
-        jas = resp.json()
-        return jsonify(jas)
+        return jsonify(resp.json())
 
             
 
