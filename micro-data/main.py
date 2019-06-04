@@ -8,14 +8,14 @@ def hello():
 
     data = request.json
     gitUser = data["action"]["gitUser"]
-    #groupName = data["name"]
+    groupName = data["groupName"]
     
     if data["public"] == "false":
         db = boto3.resource('dynamodb')
         table = db.Table('groups')
         for i in table.scan()["Items"]:
 
-            # Find the right user
+            # Find the right group
             if i["name"] == groupName:
                 dbData = i["data"]
                 

@@ -27,14 +27,17 @@ kubectl create secret generic aws-web --from-file=./aws-id --from-file=./aws-pas
 
 ## Run all servers
 
+Before set the environment variable `HTWGLOCAL` to `true`.
+`vi ~/.profile` and write at the end `export HTWGLOCAL=true`
+
 
 python3 manage.py runserver
 
 
-FLASK_APP=micro-user/main.py FLASK_DEBUG=1 flask run --debugger
+FLASK_APP=micro-user/main.py flask run --port 5000
 
 
-FLASK_APP=micro-data/main.py FLASK_DEBUG=1 flask run -p 5001 --debugger
+FLASK_APP=micro-data/main.py flask run --port 5001
 
 
 ## Remake the environment
