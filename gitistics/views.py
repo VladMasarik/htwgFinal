@@ -22,6 +22,18 @@ def logoutt(request):
     logout(request)
     return HttpResponseRedirect(reverse('gitistics/index'))
 
+
+def addUser(username, password):
+    microServiceURL = None
+    if os.environ["HTWGLOCAL"] == "true":
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
+
+    resp = requests.post(microServiceURL + "/addUser", auth=(username, password) , json = {})
+    return resp
+
+
 def usersignup(request):
     registered = False
     if request.method == 'POST':
