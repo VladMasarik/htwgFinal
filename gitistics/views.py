@@ -4,22 +4,34 @@ from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
 
 from gitistics.forms import UserForm
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 def index(request):
+    username = request.COOKIES.get('username')
+    password = request.COOKIES.get('password')
+    if authenticate(username, password):
+        cont = {
+            "user": {
+                "logged" : "true",
+                "username": username
+            }
+        } 
+        return render(request, 'gitistics/index.html', context=cont)
     return render(request, 'gitistics/index.html')
 
 @login_required
 def special(request):
     return HttpResponse("You are logged in!")
 
-@login_required
+
 def userlogout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('gitistics/index'))
+    resp = HttpResponseRedirect("/")
+    resp.delete_cookie("username")
+    resp.delete_cookie("password")
+    return resp
 
 
 def addUser(username, password):
@@ -47,10 +59,7 @@ def usersignup(request):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
         if user_form.is_valid():
-            user = user_form.save()
-            user.set_password(user.password)
-            user.save()
-            registered = True
+            addUser(user_form.cleaned_data["username"], user_form.cleaned_data["password"])
         else:
             print(user_form.errors)
     else:
@@ -63,11 +72,10 @@ def userlogin(request):
         password = request.POST.get('password')
         user = authenticate(username, password)
         if user:
-            if user.is_active:
-                login(request,user)
-                return HttpResponseRedirect(reverse('gitistics/index')).set_cookie("username", username).set_cookie("password", password)
-            else:
-                return HttpResponse("Your account was inactive.")
+            resp = HttpResponseRedirect("/")
+            resp.set_cookie("username", username)
+            resp.set_cookie("password", password)
+            return resp
         else:
             print("Someone tried to login and failed.")
             print("They used username: {} and password: {}".format(username,password))

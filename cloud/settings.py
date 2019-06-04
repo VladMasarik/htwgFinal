@@ -125,6 +125,6 @@ STATICFILES_DIRS = [STATIC_DIR,]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
-LOGIN_URL = '/gitistics/login/'
-LOGIN_REDIRECT_URL = '/gitistics/index/'
-LOGOUT_REDIRECT_URL = '/gitistics/index/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/index/'
+LOGOUT_REDIRECT_URL = '/index/'
