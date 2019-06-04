@@ -4,7 +4,7 @@ from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
 
 from gitistics.forms import UserForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -33,9 +33,14 @@ def addUser(username, password):
     return resp
 
 def authenticate(username, password):
-    #authenticated = False
-    #if  
-    return True
+    microServiceURL = None
+    if os.environ["HTWGLOCAL"] == "true":
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
+    resp = requests.post(microServiceURL + "/userauth", auth=(username, password) , json = {})
+    
+    return resp.json()["response"] == "true"
 
 def usersignup(request):
     registered = False
@@ -56,7 +61,7 @@ def userlogin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
+        user = authenticate(username, password)
         if user:
             if user.is_active:
                 login(request,user)

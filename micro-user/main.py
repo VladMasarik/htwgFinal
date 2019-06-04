@@ -24,6 +24,15 @@ def addUser():
 
 
 
+@app.route("/userauth", methods=['GET', 'POST'])
+def urlUserAuthenticate():
+    group = authenticate(request.authorization["username"], request.authorization["password"])
+
+    if group is None:
+        return jsonify({"response": "false"})
+    else:
+        return jsonify({"response": "true"})
+
 
 def authenticate(username, password):
     cred = username + ":" + password
