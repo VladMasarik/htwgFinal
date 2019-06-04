@@ -19,9 +19,6 @@ spec:
       containers:
       - name: web
         image: vladmasarik/htwg-web
-        env:
-        - name: ETCDCTL_API
-          value: "3"
         ports:
         - containerPort: 8080
           name: http

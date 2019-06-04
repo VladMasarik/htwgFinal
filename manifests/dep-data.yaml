@@ -20,8 +20,16 @@ spec:
       - name: data
         image: vladmasarik/htwg-data
         env:
-        - name: ETCDCTL_API
-          value: "3"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-web
+              key: aws-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-web
+              key: aws-pass
         ports:
         - containerPort: 5000
           name: data
