@@ -97,9 +97,6 @@ def collectData(action, auth = None):
     else:
         req["publicAccount"] = "false"
 
-
-# http://user.default.svc.cluster.local
-
     response = requests.post(microServiceURL, auth=(auth["user"], auth["pass"]) , json = req)
     jas = response.json()
 

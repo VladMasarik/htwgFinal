@@ -10,22 +10,21 @@ def userService():
     else:
         microServiceURL = "http://data.default.svc.cluster.local"
     data = request.json
-    print(data)
+    cred = request.authorization["username"] + ":" request.authorization["password"]
     
     if data["publicAccount"] == "false":
         db = boto3.resource('dynamodb')
         table = db.Table('groups')
         for i in table.scan()["Items"]:
-            if (i["name"] == request.authorization["username"] and
-                 i["password"] == request.authorization["password"]):
+
+            if cred in i["groupUsers"]:
                 req = {
                     "public": "false",
-                    "name": i["name"],
+                    "groupName": i["name"],
                     "action": data["action"]
                 }
-                return requests.post("data.default.svc.cluster.local", json = req)
-        #didnt find user
-        return "UserUnknown"
+                return requests.post(microServiceURL, json = req)
+        return jsonify({"error": "UserUnknown"})
     else:
         req = {
                     "public": "true",
