@@ -1,27 +1,27 @@
 apiVersion: v1
 kind: Deployment
 metadata:
-  name: web
+  name: data
   namespace: default
   labels:
-    app: web
+    app: data
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web
+      app: data
   template:
     metadata:
       namespace: default
       labels:
-        app: web
+        app: data
     spec:
       containers:
-      - name: web
-        image: vladmasarik/htwg-web
+      - name: data
+        image: vladmasarik/htwg-data
         env:
         - name: ETCDCTL_API
           value: "3"
         ports:
-        - containerPort: 8080
-          name: http
+        - containerPort: 5000
+          name: data
