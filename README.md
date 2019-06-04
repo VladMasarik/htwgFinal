@@ -28,7 +28,12 @@ kubectl create secret generic aws-web --from-file=./aws-id --from-file=./aws-pas
 ## Run all servers
 
 Before set the environment variable `HTWGLOCAL` to `true`.
-`vi ~/.profile` and write at the end `export HTWGLOCAL=true`
+`vi ~/.profile` and write at the end 
+
+```
+export HTWGLOCAL=true
+export AWS_DEFAULT_REGION=us-west-2
+```
 
 
 python3 manage.py runserver

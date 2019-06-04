@@ -60,6 +60,10 @@ def usersignup(request):
         user_form = UserForm(data=request.POST)
         if user_form.is_valid():
             addUser(user_form.cleaned_data["username"], user_form.cleaned_data["password"])
+            resp = HttpResponseRedirect("/")
+            resp.set_cookie("username", user_form.cleaned_data["username"])
+            resp.set_cookie("password", user_form.cleaned_data["password"])
+            return resp
         else:
             print(user_form.errors)
     else:
