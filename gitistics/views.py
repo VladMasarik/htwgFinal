@@ -12,13 +12,6 @@ from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, 'gitistics/index.html')
-'''
-def login(request):
-    return render(request, 'gitistics/login.html')
-
-def signup(request):
-    return render(request, 'gitistics/signup.html')
-'''
 
 @login_required
 def special(request):
@@ -133,29 +126,3 @@ def search(request):
         return render(request, 'gitistics/search.html', {"num": len(output) - 1000})
 
     return render(request, 'gitistics/search.html', {"num": 30})
-        
-
-
-
-
-class SearchView(View):
-    
-    template_name = 'gitistics/search.html'
-
-    def get(self, request, *args, **kwargs):
-        search_term = self.request.GET.get('search_term', None)
-        if search_term == '':
-            context = {
-                'search_term': search_term,
-                'data': None,
-            }
-            return render(request, self.template_name, context)
-        else:
-            repos = SearchRepositories(search_term).get_from_github()
-            commits = SearchCommits(repos).get_from_github()
-            data = zip(repos, commits)
-            context = {
-                'search_term': search_term,
-                'data': data,
-            }
-            return render(request, self.template_name, context)
