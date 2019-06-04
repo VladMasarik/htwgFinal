@@ -18,7 +18,7 @@ def special(request):
     return HttpResponse("You are logged in!")
 
 @login_required
-def logoutt(request):
+def userlogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('gitistics/index'))
 
@@ -57,7 +57,7 @@ def userlogin(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect(reverse('gitistics/index'))
+                return HttpResponseRedirect(reverse('gitistics/index')).set_cookie("username", username).set_cookie("password", password)
             else:
                 return HttpResponse("Your account was inactive.")
         else:
