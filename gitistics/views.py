@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render, HttpResponse
-import requests, json
+import requests, json, os
 from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
 
@@ -85,6 +85,12 @@ def statistics(request):
 
 def collectData(action, auth = None):
 
+    microServiceURL = None
+    if os.environ["HTWGLOCAL"] == "true":
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
+
     req = {
         "action": action
     }
@@ -101,7 +107,7 @@ def collectData(action, auth = None):
 
 # http://user.default.svc.cluster.local
 
-    response = requests.post("http://user.default.svc.cluster.local", auth=(auth["user"], auth["pass"]) , json = req)
+    response = requests.post(microServiceURL, auth=(auth["user"], auth["pass"]) , json = req)
     jas = response.json()
 
 
@@ -110,10 +116,12 @@ def collectData(action, auth = None):
 
 def search(request):
     repo = request.GET.get("search_term")
+    username = request.COOKIES.get("username")
+    password = request.COOKIES.get("password")
 
     auth = {
-        "user": "vlado",
-        "pass": "xxxx"
+        "user": username,
+        "pass": password
     }
     action = {
         "label": "listRepo",
@@ -121,7 +129,7 @@ def search(request):
     }
 
     if repo is not None:
-        output = collectData(action)
+        output = collectData(action, auth)
         return render(request, 'gitistics/search.html', {"num": len(output) - 1000})
 
     return render(request, 'gitistics/search.html', {"num": 30})
