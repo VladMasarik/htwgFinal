@@ -1,12 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import boto3, requests, os, json
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def hello():
 
 
-    data = request.json()
+    data = request.json
     gitUser = data["action"]["gitUser"]
     #groupName = data["name"]
     
@@ -54,7 +54,7 @@ def hello():
             "repositories": names
         }
         
-        return out
+        return jsonify(out)
 
             
 

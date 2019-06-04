@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render, HttpResponse
-import requests, json, boto3
+import requests, json
 from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
 
@@ -25,7 +25,7 @@ def special(request):
     return HttpResponse("You are logged in!")
 
 @login_required
-def logout(request):
+def logoutt(request):
     logout(request)
     return HttpResponseRedirect(reverse('gitistics/index'))
 
@@ -99,12 +99,13 @@ def collectData(action, auth = None):
         req["publicAccount"] = "false"
 
 
+# http://user.default.svc.cluster.local
+
+    response = requests.post("http://user.default.svc.cluster.local", auth=(auth["user"], auth["pass"]) , json = req)
+    jas = response.json()
 
 
-    response = requests.post("user.default.svc.cluster.local", auth=(auth["user"], auth["pass"]) , json = req)
-    
-
-    return response.json["repositories"]
+    return jas["repositories"]
     
 
 def search(request):
@@ -121,10 +122,12 @@ def search(request):
 
     if repo is not None:
         output = collectData(action)
+        return render(request, 'gitistics/search.html', {"num": len(output) - 1000})
+
+    return render(request, 'gitistics/search.html', {"num": 30})
         
 
 
-    return render(request, 'gitistics/search.html', {"num": len(output) - 1000})
 
 
 class SearchView(View):

@@ -1,11 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import boto3, requests, os
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def userService():
 
-    data = request.json()
+    data = request.json
+    print(data)
     
     if data["publicAccount"] == "false":
         db = boto3.resource('dynamodb')
@@ -26,7 +27,11 @@ def userService():
                     "public": "true",
                     "action": data["action"]
                 }
-        return requests.post("data.default.svc.cluster.local", json = req)
+
+        # data.default.svc.cluster.local
+        resp = requests.post("http://data.default.svc.cluster.local", json = req)
+        jas = resp.json()
+        return jsonify(jas)
 
             
 
