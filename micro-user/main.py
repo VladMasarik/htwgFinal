@@ -8,7 +8,6 @@ def addUser():
         
     cred = request.authorization["username"] + ":" + request.authorization["password"]
     db = boto3.client('dynamodb')
-    x = db.list_tables()
 
     db = boto3.resource('dynamodb')
     table = db.Table('groups')
@@ -49,7 +48,7 @@ def authenticate(username, password):
 @app.route("/", methods=['GET', 'POST'])
 def userService():
     microServiceURL = None
-    if os.environ["HTWGLOCAL"] == "true":
+    if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5001"
     else:
         microServiceURL = "http://data.default.svc.cluster.local"
@@ -58,7 +57,7 @@ def userService():
     
     if data["publicAccount"] == "false":
         group = authenticate(request.authorization["username"], request.authorization["password"])
-        if group in None:
+        if group is None:
             return jsonify({"error": "UserUnknown"})
         else:
             req = {
@@ -66,7 +65,8 @@ def userService():
                 "groupName": group["name"],
                 "action": data["action"]
             }
-            return requests.post(microServiceURL, json = req)
+            resp = requests.post(microServiceURL, json = req)
+            return jsonify(resp.json())
     else:
         req = {
             "public": "true",
