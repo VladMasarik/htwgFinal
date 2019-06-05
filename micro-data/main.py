@@ -2,6 +2,21 @@ from flask import Flask, request, jsonify
 import boto3, requests, os, json
 app = Flask(__name__)
 
+
+
+def removeEmptyString(dic):
+    for e in dic:
+        if isinstance(dic[e], dict):
+            dic[e] = removeEmptyString(dic[e])
+        if (isinstance(dic[e], str) and dic[e] == ""):
+            print("##### Dicrionary:\n", dic, "\n##### Entry:\n", e)
+            dic[e] = None
+        if isinstance(dic[e], list):
+            for entry in dic[e]:
+                removeEmptyString(entry)
+    return dic
+        
+
 @app.route("/", methods=['GET', 'POST'])
 def hello():
 
@@ -24,35 +39,43 @@ def hello():
 
                     # DB has data?
                     if gitUser not in dbData:
-                        response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
-                        repos = json.loads(response.content.decode('utf-8'))
+                        repos = []
+                        page = 1
+                        while page > 0:
+                            response = requests.get(('https://api.github.com/users/{}/repos?page={}&per_page=100').format(gitUser,page))
+                            repoList = response.json()
+                            repos = repos + repoList
+                            if len(repoList) < 30:
+                                page = 0
+                            else:
+                                page += 1
 
                         # Update DB
                         dbData[gitUser] = {"repoList": repos}
+
+                        dbData = removeEmptyString(dbData)
+
+
                         table.update_item(
                             Key={
                                 "name": i["name"]
                             },
-                            UpdateExpression='SET data = :val3',
+                            UpdateExpression='SET #val = :val3',
                             ExpressionAttributeValues={
                                 ":val3": dbData
+                            },
+                            ExpressionAttributeNames={
+                                "#val": "data"
                             }
-                        )
+                        )                        
 
                     return jsonify({"repositories": dbData[gitUser]["repoList"]})
     else:
         response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
-        repos = json.loads(response.content.decode('utf-8'))
-
-        names = []
-        for e in repos:
-            names.append(e["name"])
+        # repos = json.loads(response.content.decode('utf-8'))
+        repos = response.json()
         
-        out = {
-            "repositories": names
-        }
-        
-        return jsonify(out)
+        return jsonify(repos)
 
             
 
