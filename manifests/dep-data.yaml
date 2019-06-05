@@ -30,6 +30,8 @@ spec:
             secretKeyRef:
               name: aws-web
               key: aws-pass
+        - name: AWS_DEFAULT_REGION
+          value: "us-west-2"
         ports:
         - containerPort: 5000
           name: data
