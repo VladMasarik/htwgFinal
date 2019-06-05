@@ -36,7 +36,7 @@ def userlogout(request):
 
 def addUser(username, password):
     microServiceURL = None
-    if os.environ["HTWGLOCAL"] == "true":
+    if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
     else:
         microServiceURL = "http://user.default.svc.cluster.local"
@@ -46,7 +46,7 @@ def addUser(username, password):
 
 def authenticate(username, password):
     microServiceURL = None
-    if os.environ["HTWGLOCAL"] == "true":
+    if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
     else:
         microServiceURL = "http://user.default.svc.cluster.local"
@@ -111,7 +111,7 @@ def statistics(request):
 def collectData(action, auth = None):
 
     microServiceURL = None
-    if os.environ["HTWGLOCAL"] == "true":
+    if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
     else:
         microServiceURL = "http://user.default.svc.cluster.local"
@@ -130,10 +130,14 @@ def collectData(action, auth = None):
         req["publicAccount"] = "false"
 
     response = requests.post(microServiceURL, auth=(auth["user"], auth["pass"]) , json = req)
-    jas = response.json()
+    resp = response.json()
 
+    names = []
+    for e in resp["repositories"]:
+        names.append(e["name"])
+    
 
-    return jas["repositories"]
+    return names
     
 
 def search(request):
@@ -150,7 +154,6 @@ def search(request):
     }
 
     if repo is not None:
-        output = collectData(action, auth)
-        return render(request, 'gitistics/search.html', {"num": len(output) - 1000})
+        return render(request, 'gitistics/search.html', {"repoList": collectData(action, auth)})
 
-    return render(request, 'gitistics/search.html', {"num": 30})
+    return render(request, 'gitistics/search.html')
