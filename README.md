@@ -39,10 +39,10 @@ export AWS_DEFAULT_REGION=us-west-2
 python3 manage.py runserver
 
 
-FLASK_APP=micro-user/main.py flask run --port 5000
+FLASK_APP=micro-user/main.py FLASK_DEBUG=1 flask run --port 5000
 
 
-FLASK_APP=micro-data/main.py flask run --port 5001
+FLASK_APP=micro-data/main.py FLASK_DEBUG=1 flask run --port 5001
 
 Run everything in one terminal win:
 ```
