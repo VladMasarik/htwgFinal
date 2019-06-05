@@ -44,6 +44,11 @@ FLASK_APP=micro-user/main.py flask run --port 5000
 
 FLASK_APP=micro-data/main.py flask run --port 5001
 
+Run everything in one terminal win:
+```
+python3 manage.py runserver & FLASK_APP=micro-user/main.py flask run --port 5000 & FLASK_APP=micro-data/main.py flask run --port 5001 
+```
+
 
 ## Remake the environment
 

@@ -1,6 +1,4 @@
 __pycache__
 migrations
-db.sqlite3
-.vscode
 aws-id
 aws-pass
