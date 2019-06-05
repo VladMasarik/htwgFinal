@@ -17,7 +17,7 @@
         <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu">
             <i class="fa fa-bars"></i>
         </a>
-        <a href="/gitistics/#home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+        <a href="/#home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
     </div>
 </div>
       
@@ -29,8 +29,15 @@
     <input type="text" name="search_term" class="form-control">
     <input type="submit" value="Submit">
 </form>
-
-<h1>{{num}}</h1>
+{% if repoList %}
+<ul>
+{% for repo in repoList %}
+    <li>
+        {{repo}}
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
       
 <footer class="w3-container w3-padding-64 w3-center w3-opacity">  
     <p>Cloud application development project</p>
