@@ -10,8 +10,38 @@ body,h1,h2,h3,h4,h5,h6 {
     font-size: 200px
 }
 
+.fa-hand-o-right { 
+    font-size: 30px
+}
+
 .divider{
     width:5px;
     height:auto;
     display:inline-block;
+}
+
+section {
+    display: -webkit-flex;
+    display: flex;
+}
+  
+#leftpart {
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    background: #ccc;
+    padding: 20px;
+}
+  
+#leftpart ul {
+    list-style-type: none;
+    padding: 0;
+}
+  
+#rightpart {
+    -webkit-flex: 3;
+    -ms-flex: 3;
+    flex: 3;
+    background-color: #f1f1f1;
+    padding: 10px;
 }
