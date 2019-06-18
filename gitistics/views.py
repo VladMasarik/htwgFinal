@@ -146,7 +146,7 @@ def search(request):
         "gitUser": repo,
     }
     
-    userData = requests.get('https://api.github.com/users/VladMasarik')
+    userData = requests.get('https://api.github.com/users/{}'.format(search_term))
     dataList = []
     dataList.append(userData.json())
     cleanedData = []
