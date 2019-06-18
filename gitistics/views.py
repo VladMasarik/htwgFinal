@@ -114,7 +114,7 @@ def collectData(action, auth = None):
         "action": action
     }
 
-    if auth is None:
+    if auth is None or auth["user"] is None:
         auth = {
             "user": "public",
             "pass": "none"
@@ -127,7 +127,7 @@ def collectData(action, auth = None):
     resp = response.json()
 
     names = []
-    for e in resp["repositories"]:
+    for e in resp:
         names.append(e["name"])   
 
     return names
@@ -163,8 +163,13 @@ def search(request):
         userStats['updated_at'] = data['updated_at']
     cleanedData.append(userStats)
 
+    
 
     if repo is not None:
-        return render(request, 'gitistics/search.html', {'data': userStats, 'repoList': collectData(action, auth)})
+        ctx = {
+        'data': userStats,
+        'repoList': collectData(action, auth)
+        }
+        return render(request, 'gitistics/search.html', context=ctx)
 
     return render(request, 'gitistics/search.html')

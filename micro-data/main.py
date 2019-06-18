@@ -23,11 +23,14 @@ def hello():
 
     data = request.json
     gitUser = data["action"]["gitUser"]
-    groupName = data["groupName"]
     
-    if data["public"] == "false":
-        db = boto3.resource('s3')
-        table = db.Table('groups')
+    #if data["public"] == "false":
+    if False:
+        groupName = data["groupName"]
+        s3 = boto3.resource('s3')
+        bucket = s3.Object('kittyfolder', 'my')
+        here = "tttttxt"
+        bucket.put(Body=here)
         for i in table.scan()["Items"]:
 
             # Find the right group
