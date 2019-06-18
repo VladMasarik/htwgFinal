@@ -45,3 +45,19 @@ section {
     background-color: #f1f1f1;
     padding: 10px;
 }
+
+#timestamp {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#timestamp td, #timestamp th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    word-wrap: break-word;
+}
+
+#timestamp tr:hover {
+    background-color: rgba(221, 221, 221, 0.836);
+}
