@@ -146,26 +146,28 @@ def search(request):
         "gitUser": repo,
     }
     
-    userData = requests.get('https://api.github.com/users/{}'.format(search_term))
-    dataList = []
-    dataList.append(userData.json())
-    cleanedData = []
-    userStats = {}
-    for data in dataList:
-        userStats['name'] = data['name']
-        userStats['email'] = data['email']
-        userStats['public_repos'] = data['public_repos']
-        userStats['avatar_url'] = data['avatar_url']
-        userStats['followers'] = data['followers']
-        userStats['following'] = data['following']
-        userStats['location'] = data['location']
-        userStats['created_at'] = data['created_at']
-        userStats['updated_at'] = data['updated_at']
-    cleanedData.append(userStats)
 
     
 
     if repo is not None:
+        
+        userData = requests.get('https://api.github.com/users/{}'.format(repo))
+        dataList = []
+        dataList.append(userData.json())
+        cleanedData = []
+        userStats = {}
+        for data in dataList:
+            userStats['name'] = data['name']
+            userStats['email'] = data['email']
+            userStats['public_repos'] = data['public_repos']
+            userStats['avatar_url'] = data['avatar_url']
+            userStats['followers'] = data['followers']
+            userStats['following'] = data['following']
+            userStats['location'] = data['location']
+            userStats['created_at'] = data['created_at']
+            userStats['updated_at'] = data['updated_at']
+        cleanedData.append(userStats)
+
         ctx = {
         'data': userStats,
         'repoList': collectData(action, auth)
