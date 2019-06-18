@@ -189,6 +189,14 @@ def search(request):
             userStats['updated_at'] = data['updated_at']
         cleanedData.append(userStats)
 
+        # Get a list of dictionaries full of languages
+        repos = []
+        for e in collectData(action, auth):
+            response = requests.get(('https://api.github.com/repos/{}/{}/languages').format(repo,e))
+            repoList = response.json()
+            repos.append(repoList)
+        # END
+
         ctx = {
         'data': userStats,
         'repoList': collectData(action, auth)
