@@ -67,6 +67,26 @@ document.getElementById("reposButton").addEventListener("click", function () {
 
 // foreach repo in repolist
 
+      // Read current URL
+      const urlParams = new URLSearchParams(window.location.search);
+      // get parameter "search_term"
+      const searchRepo = urlParams.get('search_term');
+      // print it to console
+      console.log(searchRepo)
+
+      // create AJAX request
+      $.ajax({
+        // To this URL; backtics "``" are supposed to do a format on that string
+        url: `/api/repoList?search_term=${searchRepo}`,
+        // After you receive an answer run this fucntion
+        success: function( result ) {
+          // Result is the JSON
+          console.log(result);
+          repoList = JSON.parse(result)
+          list = repoList["list"]
+        }
+      });
+
               var tableBody = document.getElementById("timestamp");
               var row = document.createElement("tr");
 
