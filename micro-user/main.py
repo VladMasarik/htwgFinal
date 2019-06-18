@@ -7,9 +7,9 @@ app = Flask(__name__)
 def addUser():
         
     cred = request.authorization["username"] + ":" + request.authorization["password"]
-    db = boto3.client('dynamodb')
+    db = boto3.client('s3')
 
-    db = boto3.resource('dynamodb')
+    db = boto3.resource('s3')
     table = db.Table('groups')
     table.put_item(
         Item={
@@ -35,7 +35,7 @@ def urlUserAuthenticate():
 
 def authenticate(username, password):
     cred = username + ":" + password
-    db = boto3.resource('dynamodb')
+    db = boto3.resource('s3')
     table = db.Table('groups')
     for group in table.scan()["Items"]:
         if cred in group["groupUsers"]:

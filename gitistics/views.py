@@ -7,7 +7,6 @@ from gitistics.forms import UserForm
 from django.contrib.auth import login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
 
 def index(request):
     username = request.COOKIES.get('username')
@@ -21,11 +20,6 @@ def index(request):
         } 
         return render(request, 'gitistics/index.html', context=cont)
     return render(request, 'gitistics/index.html')
-
-@login_required
-def special(request):
-    return HttpResponse("You are logged in!")
-
 
 def userlogout(request):
     resp = HttpResponseRedirect("/")
@@ -134,8 +128,7 @@ def collectData(action, auth = None):
 
     names = []
     for e in resp["repositories"]:
-        names.append(e["name"])
-    
+        names.append(e["name"])   
 
     return names
     
@@ -152,8 +145,26 @@ def search(request):
         "label": "listRepo",
         "gitUser": repo,
     }
+    
+    userData = requests.get('https://api.github.com/users/VladMasarik')
+    dataList = []
+    dataList.append(userData.json())
+    cleanedData = []
+    userStats = {}
+    for data in dataList:
+        userStats['name'] = data['name']
+        userStats['email'] = data['email']
+        userStats['public_repos'] = data['public_repos']
+        userStats['avatar_url'] = data['avatar_url']
+        userStats['followers'] = data['followers']
+        userStats['following'] = data['following']
+        userStats['location'] = data['location']
+        userStats['created_at'] = data['created_at']
+        userStats['updated_at'] = data['updated_at']
+    cleanedData.append(userStats)
+
 
     if repo is not None:
-        return render(request, 'gitistics/search.html', {"repoList": collectData(action, auth)})
+        return render(request, 'gitistics/search.html', {'data': userStats, 'repoList': collectData(action, auth)})
 
     return render(request, 'gitistics/search.html')

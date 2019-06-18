@@ -26,7 +26,7 @@ def hello():
     groupName = data["groupName"]
     
     if data["public"] == "false":
-        db = boto3.resource('dynamodb')
+        db = boto3.resource('s3')
         table = db.Table('groups')
         for i in table.scan()["Items"]:
 
