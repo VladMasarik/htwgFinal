@@ -39,13 +39,14 @@
     <ul>
       <li>You've searched Github for:</li>
       <br>
-      <li>&emsp;<i class="fa fa-arrow-right w3-text-red"></i><h1> {{ data.user }}</h1></li>
+      <li>&emsp;<h3><i class="fa fa-arrow-right w3-text-red"></i>{{ data.name }}</h3></li>
       <br>
       <li><img class="avatar" src="{{ data.avatar_url }}" width="200" height="200"></li>
       <br>
       <li>Joined GitHub on:</li>
       <br>
-      <li>&emsp;<i class="fa fa-arrow-right w3-text-red"></i> {{ data.owner }}</li>
+      <li>&emsp;<i class="fa fa-arrow-right w3-text-red"></i>{{ data.created_at }}</li>
+      <li>{{ data.location }}</li>
     </ul>
   </div>
   
@@ -55,7 +56,7 @@
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-red w3-padding-16">
             <i class="fa fa-comment w3-xxxlarge"></i>
-            <h3>xx {{ repos }}</h3>
+            <h3>{{ data.public_repos}}</h3>
             <p>Repositories</p>
           </div>
         </div>
@@ -76,21 +77,21 @@
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-orange w3-text-white w3-padding-16">
             <i class="fa fa-language w3-xxxlarge"></i>
-            <h3>xx</h3>
+            <h3>xx{{ languages.length }}</h3>
             <p>Languages</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-green w3-text-white w3-padding-16">
             <i class="fa fa-user w3-xxxlarge"></i>
-            <h3>xx {{ following }}</h3>
+            <h3>{{ data.following }}</h3>
             <p>Following</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-pink w3-text-white w3-padding-16">
             <i class="fa fa-users w3-xxxlarge"></i>
-            <h3>xx {{ followers }}</h3>
+            <h3>{{ data.followers }}</h3>
             <p>Followers</p>
           </div>
         </div>    
