@@ -38,15 +38,12 @@
   <div id="leftpart">
     <ul>
       <li>You've searched Github for:</li>
-      <br>
       <li>&emsp;<h3><i class="fa fa-arrow-right w3-text-red"></i>{{ data.name }}</h3></li>
       <br>
       <li><img class="avatar" src="{{ data.avatar_url }}" width="200" height="200"></li>
       <br>
       <li>Joined GitHub on:</li>
-      <br>
-      <li>&emsp;<i class="fa fa-arrow-right w3-text-red"></i>{{ data.created_at }}</li>
-      <li>{{ data.location }}</li>
+      <li>&emsp;<h3><i class="fa fa-arrow-right w3-text-red"></i>{{ data.created_at }}</h3></li>
     </ul>
   </div>
   
@@ -122,18 +119,6 @@
         <table id="timestamp"></table>
       </div>
       <br>
-
-      <!-- put in the table in .js -->
-      {% if repoList %}
-      <ul>
-        {% for repo in repoList %}
-        <li>
-          {{repo}}
-        </li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      <!-- put in the table in .js -->
 
   </div>
 </section>
