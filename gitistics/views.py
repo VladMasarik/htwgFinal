@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 import requests, json, os
 from django.views import View
 from .getfromgithub import SearchRepositories, SearchCommits
+from django.http import JsonResponse
 
 from gitistics.forms import UserForm
 from django.contrib.auth import login
@@ -132,6 +133,26 @@ def collectData(action, auth = None):
 
     return names
     
+def apiRepoList(request):
+    repo = request.GET.get("search_term")
+    username = request.COOKIES.get("username")
+    password = request.COOKIES.get("password")
+    auth = {
+        "user": username,
+        "pass": password
+    }
+    action = {
+        "label": "listRepo",
+        "gitUser": repo,
+    }
+    
+    if repo is not None:
+
+        ctx = {
+        'list': collectData(action, auth)
+        }
+        return JsonResponse(ctx)
+    return JsonResponse({"list": ["one","two","three"]})
 
 def search(request):
     repo = request.GET.get("search_term")
@@ -150,7 +171,7 @@ def search(request):
     
 
     if repo is not None:
-        
+
         userData = requests.get('https://api.github.com/users/{}'.format(repo))
         dataList = []
         dataList.append(userData.json())
@@ -167,6 +188,14 @@ def search(request):
             userStats['created_at'] = data['created_at']
             userStats['updated_at'] = data['updated_at']
         cleanedData.append(userStats)
+
+        # Get a list of dictionaries full of languages
+        repos = []
+        for e in collectData(action, auth):
+            response = requests.get(('https://api.github.com/repos/{}/{}/languages').format(repo,e))
+            repoList = response.json()
+            repos.append(repoList)
+        # END
 
         ctx = {
         'data': userStats,

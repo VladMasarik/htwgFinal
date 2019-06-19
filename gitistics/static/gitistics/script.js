@@ -67,34 +67,52 @@ document.getElementById("reposButton").addEventListener("click", function () {
 
 // foreach repo in repolist
 
-              var tableBody = document.getElementById("timestamp");
+      // Read current URL
+      const urlParams = new URLSearchParams(window.location.search);
+      // get parameter "search_term"
+      const searchRepo = urlParams.get('search_term');
+      // print it to console
+      console.log(searchRepo)
+
+      // create AJAX request
+      $.ajax({
+        // To this URL; backtics "``" are supposed to do a format on that string
+        url: `/api/repoList?search_term=${searchRepo}`,
+        // After you receive an answer run this fucntion
+        success: function( result ) {
+          // Result is the JSON
+          //repoList = JSON.parse(result)
+          list = result["list"]
+          list.forEach(function(repo) {
+            
+            var tableBody = document.getElementById("timestamp");
               var row = document.createElement("tr");
 
               var reponame = document.createElement("td");
               //name {{ repo.name }}
-              reponame.appendChild(document.createTextNode(repo.name));
+              reponame.appendChild(document.createTextNode(repo));
 
               var created = document.createElement("td");
               created.style.textAlign = "center";
               //createdtime {{ repo.created_at }}
-              var d = new Date(parseInt(repo.createdtime, 10));
+              var d = new Date(parseInt(repo, 10));
               var ds = d.toLocaleString("en-GB");
               created.appendChild(document.createTextNode(ds));
 
               var pushed = document.createElement("td");
               pushed.style.textAlign = "center";
               //pushedtime {{ repo.pushed_at }}
-              var d = new Date(parseInt(repo.createdtime, 10));
+              var d = new Date(parseInt(repo, 10));
               var ds = d.toLocaleString("en-GB");
               pushed.appendChild(document.createTextNode(ds));
 
               var language = document.createElement("td");
               //language {{ repo.language }}
-              language.appendChild(document.createTextNode(repo.language));
+              language.appendChild(document.createTextNode(repo)); //repo.language
 
               var size = document.createElement("td");
               //size {{ repo.size }}
-              size.appendChild(document.createTextNode(repo.size));
+              size.appendChild(document.createTextNode(repo)); // .size
 
               row.appendChild(reponame);
               row.appendChild(created);
@@ -102,6 +120,14 @@ document.getElementById("reposButton").addEventListener("click", function () {
               row.appendChild(language);
               row.appendChild(size);
               tableBody.appendChild(row);
+        });
+        }
+      });
+
+
+
+
+              
 
   }
 });
