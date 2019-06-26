@@ -4,6 +4,66 @@ app = Flask(__name__)
 
 
 
+
+def updateMembers(table, members):
+    table.update_item(
+        Key={
+            "name": i["name"]
+        },
+        UpdateExpression='SET #val = :val3',
+        ExpressionAttributeValues={
+            ":val3": members
+        },
+        ExpressionAttributeNames={
+            "#val": "members"
+        }
+    )
+
+
+@app.route("/joinGroup", methods=['GET', 'POST'])
+def joinGroup():
+    data = request.json
+    username = data['username']
+    groupName = data["groupName"]
+
+    db = boto3.resource('dynamodb')
+    table = db.Table('groups')
+
+    for i in table.scan()["Items"]:
+        if i["name"] == groupName:
+            members = i["members"]
+
+            if username in members:
+                return "Member already in group", 400
+            else:
+                members.append(username)
+                updateMembers(table, members)
+                return jsonify({"result": "User {} was added to the group {}".format(username, groupName)})
+
+
+@app.route("/leaveGroup", methods=['GET', 'POST'])
+def leaveGroup():
+    data = request.json
+    username = data['username']
+    groupName = data["groupName"]
+
+    db = boto3.resource('dynamodb')
+    table = db.Table('groups')
+
+    for i in table.scan()["Items"]:
+        if i["name"] == groupName:
+            members = i["members"]
+
+            if username in members:
+                members.remove(username)
+                updateMembers(table, members)
+
+                return jsonify({"result": "User {} was removed from the group {}".format(username, groupName)})
+
+            else:
+return "Member not in group", 400
+
+
 def removeEmptyString(dic):
     for e in dic:
         if isinstance(dic[e], dict):
