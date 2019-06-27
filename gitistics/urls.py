@@ -13,5 +13,7 @@ urlpatterns = [
     path('search', views.search, name='search'),
     url(r'^signup/$', views.usersignup, name='signup'),
     url(r'^api/repoList/$', views.apiRepoList, name='apiRepoList'),
-
+    url(r'^profile/$', views.profile, name='profile'),
+    url(r'^joinGroup/$', views.joinGroup, name='joinGroup'),
+    url(r'^leaveGroup/$', views.leaveGroup, name='leaveGroup')
 ]

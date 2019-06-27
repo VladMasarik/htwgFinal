@@ -12,12 +12,6 @@
 <link rel="stylesheet" href="{% static 'gitistics/style.css' %}">
 <body>
 
-<ul>
-    {% for group in groupList %}
-    <li><p>{{group}}</p><p href="/joinGroup?group{{group}}">join</p><p href="/leaveGroup?group{{group}}">leave</p></li>
-    {% endfor %}
-</ul>
-
 
 <div class="w3-top">
     <div class="w3-bar w3-red w3-card w3-left-align w3-large">
@@ -54,8 +48,17 @@
     </ul>
   </div>
   
+
+  
+
+
   <div id="rightpart">
     <h1>Summary</h1>
+    <ul>
+      {% for group in groupList %}
+      <li><p>{{group}} </p><a href="/joinGroup?group={{group}}">join </a><a href="/leaveGroup?group={{group}}">leave</a></li>
+      {% endfor %}
+  </ul>
     <div class="w3-row-padding w3-margin-bottom">
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-red w3-padding-16">

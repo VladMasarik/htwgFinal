@@ -3,6 +3,47 @@ import boto3, requests, os
 app = Flask(__name__)
 
 
+@app.route("/listGroups", methods=['GET', 'POST'])
+def listGroups():
+    return jsonify(callDataService({}, "/listGroups"))
+
+def callDataService(req, path):
+    microServiceURL = None
+    if "HTWGLOCAL" in os.environ:
+        microServiceURL = "http://localhost:5001"
+    else:
+        microServiceURL = "http://data.default.svc.cluster.local"
+
+
+    resp = requests.post(microServiceURL + path, json = req)
+    return resp.json()
+
+    
+    # data = request.json
+    
+    
+    # if data["publicAccount"] == "false":
+    #     group = authenticate(request.authorization["username"], request.authorization["password"])
+    #     if group is None:
+    #         return jsonify({"error": "UserUnknown"})
+    #     else:
+    #         req = {
+    #             "public": "false",
+    #             "groupName": group["name"],
+    #             "action": data["action"]
+    #         }
+    #         resp = requests.post(microServiceURL, json = req)
+
+
+@app.route("/joinGroup")
+def joinGroup():
+    callDataService(request.json, "/joinGroup")
+
+@app.route("/leaveGroup")
+def leaveGroup():
+    callDataService(request.json, "/leaveGroup")
+
+
 @app.route("/addUser", methods=['GET', 'POST'])
 def addUser():
         

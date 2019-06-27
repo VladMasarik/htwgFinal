@@ -10,9 +10,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
 def index(request):
-    username = request.COOKIES.get('username')
-    password = request.COOKIES.get('password')
-    if authenticate(username, password):
+    username = authenticate(request)
+    if username is not None:
         cont = {
             "user": {
                 "logged" : "true",
@@ -29,6 +28,53 @@ def userlogout(request):
     return resp
 
 
+
+def joinGroup(request):
+    body = {
+        "username": authenticate(request),
+        "groupName": request.GET.get("group")
+    }
+    callUserService(body, "/joinGroup")
+    return HttpResponseRedirect("/profile")
+
+def leaveGroup(request):
+    body = {
+        "username": authenticate(request),
+        "groupName": request.GET.get("group")
+    }
+    callUserService(body, "/leaveGroup")
+    return HttpResponseRedirect("/profile")
+
+
+def callUserService(data, path):
+    microServiceURL = None
+    if "HTWGLOCAL" in os.environ:
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
+    resp = requests.post(microServiceURL + path, json = data)
+    
+    return resp.json()
+
+def getCred(request):
+    username = request.COOKIES.get("username")
+    password = request.COOKIES.get("password")
+    return username, password
+
+def profile(request):
+    username, password = getCred(request)
+
+    if authenticate(request) is not None:
+        # /joinGroup?group{{group}}">join</p><p href="/leaveGroup?group{{group}}
+        ctx = {
+            "groupList": callUserService({}, "/listGroups")
+        }
+        
+        return render(request, "gitistics/profile.html", context=ctx)
+    
+    return HttpResponseRedirect("/")
+
+
 def addUser(username, password):
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
@@ -39,15 +85,24 @@ def addUser(username, password):
     resp = requests.post(microServiceURL + "/addUser", auth=(username, password) , json = {})
     return resp
 
-def authenticate(username, password):
+
+def authenticate(request = None, username = None, password = None):
+    if request is not None:
+        username = request.COOKIES.get("username")
+        password = request.COOKIES.get("password")
+
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
     else:
         microServiceURL = "http://user.default.svc.cluster.local"
+
     resp = requests.post(microServiceURL + "/userauth", auth=(username, password) , json = {})
-    
-    return resp.json()["response"] == "true"
+
+    if resp.json()["response"] == "true":
+        return username
+    else:
+        return None
 
 def usersignup(request):
     registered = False
@@ -69,8 +124,8 @@ def userlogin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username, password)
-        if user:
+        user = authenticate(None, username, password)
+        if user is not None:
             resp = HttpResponseRedirect("/")
             resp.set_cookie("username", username)
             resp.set_cookie("password", password)
