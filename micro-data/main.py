@@ -93,7 +93,7 @@ def removeEmptyString(dic):
     return dic
         
 
-def getBucketJSON(client, groupName):
+def containsGroup(client, groupName):
 
     response = client.list_objects(
         Bucket="kittyfolder",
@@ -130,20 +130,15 @@ def hello():
     if data["public"] == "false":
         groupName = data["groupName"]
         s3 = boto3.client('s3')
-        # bucket = s3.Object('kittyfolder', groupName)
-        # bucket.load()
-
-        groupData = getBucketJSON(s3, groupName)
-        
 
         if data["action"]["label"] == "listRepo":
             body = {}
-            if not groupData:
-                body[gitUser] = {"repoList": userRepos(gitUser)}
-                s3.put_object(Key=groupName, Bucket="kittyfolder", Body=json.dumps(body))
-            else:
+            if containsGroup(s3, groupName):
                 body = s3.get_object(Bucket = "kittyfolder", Key=groupName)
                 body = json.loads(body["Body"].read().decode("utf-8")) 
+            else:
+                body[gitUser] = {"repoList": userRepos(gitUser)}
+                s3.put_object(Key=groupName, Bucket="kittyfolder", Body=json.dumps(body))
             # if gitUser not in groupData:
 
             #     # No need for empty string since it is a S3 and not Dynamodb anymore?
@@ -152,7 +147,4 @@ def hello():
 
             return jsonify({"repositories": body[gitUser]["repoList"]})
     else:
-        response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
-        repos = response.json()
-        
-        return jsonify(repos)
+        return jsonify({"repositories": userRepos(gitUser)})
