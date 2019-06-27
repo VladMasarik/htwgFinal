@@ -93,10 +93,15 @@ def removeEmptyString(dic):
     return dic
         
 
-def getBuckerJSON(obj):
-    body = obj.get()['Body'].read()
-    body = body.decode('utf-8') 
-    return json.loads(body)
+def getBucketJSON(client, groupName):
+
+    response = client.list_objects(
+        Bucket="kittyfolder",
+    )
+    for obj in response['Contents']:
+        if obj['Key'] == groupName:
+            return True
+    return False
 
 def putInBucket(obj, data):
     obj.put(Body=data)
@@ -124,21 +129,28 @@ def hello():
     
     if data["public"] == "false":
         groupName = data["groupName"]
-        s3 = boto3.resource('s3')
-        bucket = s3.Object('kittyfolder', groupName)
+        s3 = boto3.client('s3')
+        # bucket = s3.Object('kittyfolder', groupName)
+        # bucket.load()
 
-        groupData = getBuckerJSON(bucket)
+        groupData = getBucketJSON(s3, groupName)
+        
 
         if data["action"]["label"] == "listRepo":
+            body = {}
+            if not groupData:
+                body[gitUser] = {"repoList": userRepos(gitUser)}
+                s3.put_object(Key=groupName, Bucket="kittyfolder", Body=json.dumps(body))
+            else:
+                body = s3.get_object(Bucket = "kittyfolder", Key=groupName)
+                body = json.loads(body["Body"].read().decode("utf-8")) 
+            # if gitUser not in groupData:
 
-            if gitUser not in groupData:
-                groupData[gitUser] = {"repoList": userRepos(gitUser)}
+            #     # No need for empty string since it is a S3 and not Dynamodb anymore?
+            #     # dbData = removeEmptyString(groupData)
+            #     putInBucket(bucket, groupData)                   
 
-                # No need for empty string since it is a S3 and not Dynamodb anymore?
-                # dbData = removeEmptyString(groupData)
-                putInBucket(bucket, groupData)                   
-
-            return jsonify({"repositories": groupData[gitUser]["repoList"]})
+            return jsonify({"repositories": body[gitUser]["repoList"]})
     else:
         response = requests.get(('https://api.github.com/users/{}/repos').format(gitUser))
         repos = response.json()

@@ -183,7 +183,7 @@ def collectData(action, auth = None):
     resp = response.json()
 
     names = []
-    for e in resp:
+    for e in resp["repositories"]:
         names.append(e["name"])   
 
     return names
