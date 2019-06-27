@@ -95,14 +95,14 @@ document.getElementById("reposButton").addEventListener("click", function () {
               var created = document.createElement("td");
               created.style.textAlign = "center";
               //createdtime {{ repo.created_at }}
-              var d = new Date(parseInt(repo, 10));
+              var d = new Date(parseInt(repo.created_at, 10));
               var ds = d.toLocaleString("en-GB");
               created.appendChild(document.createTextNode(ds));
 
               var pushed = document.createElement("td");
               pushed.style.textAlign = "center";
               //pushedtime {{ repo.pushed_at }}
-              var d = new Date(parseInt(repo, 10));
+              var d = new Date(parseInt(repo.pushed_at, 10));
               var ds = d.toLocaleString("en-GB");
               pushed.appendChild(document.createTextNode(ds));
 
@@ -112,7 +112,7 @@ document.getElementById("reposButton").addEventListener("click", function () {
 
               var size = document.createElement("td");
               //size {{ repo.size }}
-              size.appendChild(document.createTextNode(repo)); // .size
+              size.appendChild(document.createTextNode(repo.size)); // .size
 
               row.appendChild(reponame);
               row.appendChild(created);

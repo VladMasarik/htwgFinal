@@ -60,21 +60,21 @@
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-blue w3-padding-16">
             <i class="fa fa-tasks w3-xxxlarge"></i>
-            <h3>xx</h3>
+            <h3>{{ projects.length }}</h3>
             <p>Projects</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-teal  w3-padding-16">
             <i class="fa fa-star w3-xxxlarge"></i>
-            <h3>xx</h3>
+            <h3>{{ total_stars }}</h3>
             <p>Stars</p>
           </div>
         </div>  
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-orange w3-text-white w3-padding-16">
             <i class="fa fa-language w3-xxxlarge"></i>
-            <h3>xx{{ languages.length }}</h3>
+            <h3>{{ languages.length }}</h3>
             <p>Languages</p>
           </div>
         </div>
@@ -95,14 +95,14 @@
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-lime w3-text-white w3-padding-16">
             <i class="fa fa-eye w3-xxxlarge"></i>
-            <h3>xx</h3>
+            <h3>{{ repo.watchers_count }}</h3>
             <p>Watch</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-indigo w3-text-white w3-padding-16">
             <i class="fa fa-code-fork w3-xxxlarge"></i>
-            <h3>xx</h3>
+            <h3>{{ repo.forks_count }}</h3>
             <p>Forks</p>
           </div>
         </div>
