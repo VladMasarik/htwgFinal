@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
 def index(request):
-    username = authenticate(request)
+    username, _ = authenticate(request)
     if username is not None:
         cont = {
             "user": {
@@ -26,8 +26,6 @@ def userlogout(request):
     resp.delete_cookie("username")
     resp.delete_cookie("password")
     return resp
-
-
 
 def joinGroup(request):
     username, password = authenticate(request)
@@ -49,7 +47,6 @@ def leaveGroup(request):
     callUserService(body, "/leaveGroup")
     return HttpResponseRedirect("/profile")
 
-
 def callUserService(data, path):
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
@@ -59,7 +56,6 @@ def callUserService(data, path):
     resp = requests.post(microServiceURL + path, json = data)
     
     return resp.json()
-
 
 def profile(request):
     username, password = authenticate(request)
@@ -74,7 +70,6 @@ def profile(request):
     
     return HttpResponseRedirect("/")
 
-
 def addUser(username, password):
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
@@ -84,7 +79,6 @@ def addUser(username, password):
 
     resp = requests.post(microServiceURL + "/addUser", auth=(username, password) , json = {})
     return resp
-
 
 def authenticate(request = None, username = None, password = None):
     if request is not None:
@@ -124,7 +118,7 @@ def userlogin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(None, username, password)
+        user, _ = authenticate(None, username, password)
         if user is not None:
             resp = HttpResponseRedirect("/")
             resp.set_cookie("username", username)
@@ -159,9 +153,10 @@ def statistics(request):
 
     return render(request, 'gitistics/statistics.html', {'data': userStats})
 
-
 def collectData(action, auth = None):
-
+    """
+    Returns list of repositories.
+    """
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
@@ -250,18 +245,19 @@ def search(request):
             userStats['updated_at'] = data['updated_at']
         cleanedData.append(userStats)
 
-        # Get a list of dictionaries full of languages
-        token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
-        header = {"Authorization": "token " + token}
-        repos = []
-        for e in collectData(action, auth):
-            response = requests.get(
-                'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
-                headers=header    
-            )
-            repoList = response.json()
-            repos.append(repoList)
-        # END
+        # Why is this here? I dont think it is needed.
+        # # Get a list of dictionaries full of languages
+        # token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
+        # header = {"Authorization": "token " + token}
+        # repos = []
+        # for e in collectData(action, auth):
+        #     response = requests.get(
+        #         'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
+        #         headers=header    
+        #     )
+        #     repoList = response.json()
+        #     repos.append(repoList)
+        # # END
 
         ctx = {
         'data': userStats,

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import boto3, requests, os, json
+import boto3, requests, os, json, logging
 app = Flask(__name__)
 
 
@@ -26,15 +26,19 @@ def removeEmptyString(dic):
     return dic
         
 
-def containsGroup(client, groupName):
-
+def isGroupInBucket(client, groupName):
+    """
+    Does S3 contain data for the  group X?
+    """
     response = client.list_objects(
         Bucket="kittyfolder",
     )
-    for obj in response['Contents']:
-        if obj['Key'] == groupName:
-            return True
+    if "Contents" in response.keys():
+        for obj in response['Contents']:
+            if obj['Key'] == groupName:
+                return True
     return False
+    
 
 def putInBucket(obj, data):
     obj.put(Body=data)
@@ -72,9 +76,31 @@ def listGroupsForUser(username):
     return callUserService({"username": username}, "/listGroupsPerUser")
     
 
-@app.route("/", methods=['GET', 'POST'])
-def hello():
+def get_GitHub_Users_For_User(user):
+    """
+    For registered user X return all GitHub users that X can access on S3
+    """
+    s3 = boto3.client("s3")
+    response = s3.list_objects(
+        Bucket="kittyfolder",
+    )
+    bucketGroups = []
+    if "Contents" in response.keys():
+        for obj in response['Contents']:
+            bucketGroups.append(obj["Key"])
+    userDynamoGroups = listGroupsForUser(user)
+    validGroups = list(set(userDynamoGroups) & set(bucketGroups))
+    allBody = {}
+    for group in validGroups:
+        body = s3.get_object(Bucket = "kittyfolder", Key=group)
+        body = json.loads(body["Body"].read().decode("utf-8")) 
+        allBody = {**allBody, **body}
+    return allBody
+    
 
+
+@app.route("/", methods=['GET', 'POST'])
+def root():
     data = request.json
     gitUser = data["action"]["gitUser"]
     
@@ -83,14 +109,20 @@ def hello():
         user = groupName
         s3 = boto3.client('s3')
 
+
+
+
+
+        githubUsers = get_GitHub_Users_For_User(user)
+
+
         if data["action"]["label"] == "listRepo":
-            body = {}
-            for group in listGroupsForUser(user):
-                if containsGroup(s3, group):
-                    body = s3.get_object(Bucket = "kittyfolder", Key=groupName)
-                    body = json.loads(body["Body"].read().decode("utf-8")) 
-                    return jsonify({"repositories": body[gitUser]["repoList"]})
+
+            if gitUser in githubUsers:
+                return jsonify({"repositories": githubUsers[gitUser]["repoList"]})
             
+            body = s3.get_object(Bucket = "kittyfolder", Key=user)
+            body = json.loads(body["Body"].read().decode("utf-8")) 
             body[gitUser] = {"repoList": userRepos(gitUser)}
             s3.put_object(Key=user, Bucket="kittyfolder", Body=json.dumps(body))
             return jsonify({"repositories": body[gitUser]["repoList"]})
