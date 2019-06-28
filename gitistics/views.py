@@ -30,16 +30,20 @@ def userlogout(request):
 
 
 def joinGroup(request):
+    username, password = authenticate(request)
     body = {
-        "username": authenticate(request),
+        "username": username,
+        "password": password,
         "groupName": request.GET.get("group")
     }
     callUserService(body, "/joinGroup")
     return HttpResponseRedirect("/profile")
 
 def leaveGroup(request):
+    username, password = authenticate(request)
     body = {
-        "username": authenticate(request),
+        "username": username,
+        "password": password,
         "groupName": request.GET.get("group")
     }
     callUserService(body, "/leaveGroup")
@@ -56,15 +60,11 @@ def callUserService(data, path):
     
     return resp.json()
 
-def getCred(request):
-    username = request.COOKIES.get("username")
-    password = request.COOKIES.get("password")
-    return username, password
 
 def profile(request):
-    username, password = getCred(request)
+    username, password = authenticate(request)
 
-    if authenticate(request) is not None:
+    if username is not None:
         # /joinGroup?group{{group}}">join</p><p href="/leaveGroup?group{{group}}
         ctx = {
             "groupList": callUserService({}, "/listGroups")
@@ -100,9 +100,9 @@ def authenticate(request = None, username = None, password = None):
     resp = requests.post(microServiceURL + "/userauth", auth=(username, password) , json = {})
 
     if resp.json()["response"] == "true":
-        return username
+        return username, password
     else:
-        return None
+        return None, None
 
 def usersignup(request):
     registered = False

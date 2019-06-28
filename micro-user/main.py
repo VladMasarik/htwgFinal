@@ -2,10 +2,17 @@ from flask import Flask, request, jsonify
 import boto3, requests, os
 app = Flask(__name__)
 
+def getDynamo():
+    db = boto3.resource('dynamodb')
+    return db.Table('groups')
 
 @app.route("/listGroups", methods=['GET', 'POST'])
 def listGroups():
-    return jsonify(callDataService({}, "/listGroups"))
+    table = getDynamo()
+    groupNames = []
+    for i in table.scan()["Items"]:
+        groupNames.append(i["name"])
+    return jsonify(groupNames)
 
 def callDataService(req, path):
     microServiceURL = None
@@ -35,13 +42,65 @@ def callDataService(req, path):
     #         resp = requests.post(microServiceURL, json = req)
 
 
-@app.route("/joinGroup")
-def joinGroup():
-    callDataService(request.json, "/joinGroup")
+def updateMembers(table, members, entry):
+    table.update_item(
+        Key={
+            "name": entry["name"]
+        },
+        UpdateExpression='SET #val = :val3',
+        ExpressionAttributeValues={
+            ":val3": members
+        },
+        ExpressionAttributeNames={
+            "#val": "members"
+        }
+    )
 
-@app.route("/leaveGroup")
+
+@app.route("/joinGroup", methods=['GET', 'POST'])
+def joinGroup():
+    data = request.json
+    username = data['username']
+    password = data['password']
+    groupName = data["groupName"]
+
+    db = boto3.resource('dynamodb')
+    table = db.Table('groups')
+
+    for i in table.scan()["Items"]:
+        if i["name"] == groupName:
+            members = i["members"]
+
+            if username + ":" + password in members:
+                return jsonify({"response": "Member already in group"}), 400
+            else:
+                members.append(username + ":" + password)
+                updateMembers(table, members, i)
+                return jsonify({"response": "User {} was added to the group {}".format(username, groupName)})
+
+
+@app.route("/leaveGroup", methods=['GET', 'POST'])
 def leaveGroup():
-    callDataService(request.json, "/leaveGroup")
+    data = request.json
+    username = data['username']
+    password = data['password']
+    groupName = data["groupName"]
+
+    db = boto3.resource('dynamodb')
+    table = db.Table('groups')
+
+    for i in table.scan()["Items"]:
+        if i["name"] == groupName:
+            members = i["members"]
+
+            if username + ":" + password in members:
+                members.remove(username + ":" + password)
+                updateMembers(table, members, i)
+
+                return jsonify({"response": "User {} was removed from the group {}".format(username, groupName)})
+
+            else:
+                return jsonify({"response": "Member not in group"}), 400
 
 
 @app.route("/addUser", methods=['GET', 'POST'])
@@ -55,7 +114,7 @@ def addUser():
     table.put_item(
         Item={
             "name": request.authorization["username"],
-            "groupUsers": [cred],
+            "members": [cred],
             "data": {}
         }
     )
@@ -79,7 +138,7 @@ def authenticate(username, password):
     db = boto3.resource('dynamodb')
     table = db.Table('groups')
     for group in table.scan()["Items"]:
-        if cred in group["groupUsers"]:
+        if cred in group["members"]:
             return group
     return None
     
