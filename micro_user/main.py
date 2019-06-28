@@ -14,6 +14,19 @@ def listGroups():
         groupNames.append(i["name"])
     return jsonify(groupNames)
 
+
+@app.route("/listGroupsPerUser", methods=['GET', 'POST'])
+def listGroupsPerUser():
+    table = getDynamo()
+    body = request.json
+    username = body["username"]
+    groupNames = []
+    for i in table.scan()["Items"]:
+        members = i["members"]
+        if any(username in name for name in members):
+            groupNames.append(i["name"])
+    return jsonify(groupNames)
+
 def callDataService(req, path):
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:

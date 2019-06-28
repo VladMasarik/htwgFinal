@@ -57,7 +57,20 @@ def userRepos(gitUser):
             page += 1
     return repos
 
+def callUserService(body, path):
+    microServiceURL = None
+    if "HTWGLOCAL" in os.environ:
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
 
+
+    resp = requests.post(microServiceURL + path, json = body)
+    return resp.json()
+
+def listGroupsForUser(username):
+    return callUserService({"username": username}, "/listGroupsPerUser")
+    
 
 @app.route("/", methods=['GET', 'POST'])
 def hello():
@@ -67,22 +80,25 @@ def hello():
     
     if data["public"] == "false":
         groupName = data["groupName"]
+        user = groupName
         s3 = boto3.client('s3')
 
         if data["action"]["label"] == "listRepo":
             body = {}
-            if containsGroup(s3, groupName):
-                body = s3.get_object(Bucket = "kittyfolder", Key=groupName)
-                body = json.loads(body["Body"].read().decode("utf-8")) 
-            else:
-                body[gitUser] = {"repoList": userRepos(gitUser)}
-                s3.put_object(Key=groupName, Bucket="kittyfolder", Body=json.dumps(body))
+            for group in listGroupsForUser(user):
+                if containsGroup(s3, group):
+                    body = s3.get_object(Bucket = "kittyfolder", Key=groupName)
+                    body = json.loads(body["Body"].read().decode("utf-8")) 
+                    return jsonify({"repositories": body[gitUser]["repoList"]})
+            
+            body[gitUser] = {"repoList": userRepos(gitUser)}
+            s3.put_object(Key=user, Bucket="kittyfolder", Body=json.dumps(body))
+            return jsonify({"repositories": body[gitUser]["repoList"]})
             # if gitUser not in groupData:
 
             #     # No need for empty string since it is a S3 and not Dynamodb anymore?
             #     # dbData = removeEmptyString(groupData)
-            #     putInBucket(bucket, groupData)                   
+            #     putInBucket(bucket, groupData)
 
-            return jsonify({"repositories": body[gitUser]["repoList"]})
     else:
         return jsonify({"repositories": userRepos(gitUser)})
