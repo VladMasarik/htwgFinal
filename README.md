@@ -55,4 +55,4 @@ python3 manage.py runserver & FLASK_APP=micro_user/main.py flask run --port 5000
 oc delete -f manifests --now && oc create -f manifests && oc get po 
 
 ## Start tests
-Be in the root of this project and `python3 manage.py test`
+Be in the root of this project and `python3 manage.py test && pytest -v`
