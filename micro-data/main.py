@@ -107,10 +107,15 @@ def putInBucket(obj, data):
     obj.put(Body=data)
 
 def userRepos(gitUser):
+    token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
+    header = {"Authorization": "token " + token}
     repos = []
     page = 1
     while page > 0:
-        response = requests.get(('https://api.github.com/users/{}/repos?page={}&per_page=100').format(gitUser,page))
+        response = requests.get(
+            'https://api.github.com/users/{}/repos?page={}&per_page=100'.format(gitUser,page),
+            headers=header
+        )
         repoList = response.json()
         repos = repos + repoList
         if len(repoList) < 30:

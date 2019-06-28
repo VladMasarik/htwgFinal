@@ -138,7 +138,9 @@ def userlogin(request):
         return render(request, 'gitistics/login.html', {})
 
 def statistics(request):
-    userData = requests.get('https://api.github.com/users/VladMasarik')
+    token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
+    header = {"Authorization": "token " + token}
+    userData = requests.get('https://api.github.com/users/VladMasarik', headers=header)
     dataList = []
     dataList.append(userData.json())
     cleanedData = []
@@ -226,8 +228,12 @@ def search(request):
     
 
     if repo is not None:
-
-        userData = requests.get('https://api.github.com/users/{}'.format(repo))
+        token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
+        header = {"Authorization": "token " + token}
+        userData = requests.get(
+            'https://api.github.com/users/{}'.format(repo),
+            headers=header
+        ) 
         dataList = []
         dataList.append(userData.json())
         cleanedData = []
@@ -245,9 +251,14 @@ def search(request):
         cleanedData.append(userStats)
 
         # Get a list of dictionaries full of languages
+        token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
+        header = {"Authorization": "token " + token}
         repos = []
         for e in collectData(action, auth):
-            response = requests.get(('https://api.github.com/repos/{}/{}/languages').format(repo,e))
+            response = requests.get(
+                'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
+                headers=header    
+            )
             repoList = response.json()
             repos.append(repoList)
         # END
