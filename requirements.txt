@@ -3,4 +3,3 @@ boto3
 requests
 Django==2.2
 pytest
-pysqlite
