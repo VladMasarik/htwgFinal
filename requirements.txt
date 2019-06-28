@@ -1,5 +1,5 @@
 Flask
 boto3
 requests
-Django
+Django==2.2
 pytest
