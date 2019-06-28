@@ -44,7 +44,7 @@ def putInBucket(obj, data):
     obj.put(Body=data)
 
 def userRepos(gitUser):
-    token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
+    token = os.environ["GITKEY"]
     header = {"Authorization": "token " + token}
     repos = []
     page = 1
