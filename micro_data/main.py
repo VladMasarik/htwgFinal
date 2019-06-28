@@ -13,10 +13,6 @@ def getDynamo():
     return db.Table('groups')
 
 
-
-
-
-
 def removeEmptyString(dic):
     for e in dic:
         if isinstance(dic[e], dict):
