@@ -94,7 +94,7 @@ def get_GitHub_Users_For_User(user):
     for group in validGroups:
         body = s3.get_object(Bucket = "kittyfolder", Key=group)
         body = json.loads(body["Body"].read().decode("utf-8")) 
-        allBody = {**allBody, **body}
+        allBody = {**allBody, **body} # Merge two dictionaries
     return allBody
     
 
