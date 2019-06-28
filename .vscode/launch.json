@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "micro-user/main.py",
+                "FLASK_APP": "micro_user/main.py",
                 "FLASK_ENV": "development",
                 "FLASK_DEBUG": "0"
             },
@@ -27,7 +27,7 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "micro-data/main.py",
+                "FLASK_APP": "micro_data/main.py",
                 "FLASK_ENV": "development",
                 "FLASK_DEBUG": "0"
             },
