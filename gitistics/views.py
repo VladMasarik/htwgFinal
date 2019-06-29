@@ -191,6 +191,45 @@ def collectData(action, auth = None):
 
     return names
 
+def apiGithubUserLanguages(request):
+    repo = request.GET.get("search_term")
+    username = request.COOKIES.get("username")
+    password = request.COOKIES.get("password")
+    auth = {
+        "user": username,
+        "pass": password
+    }
+    action = {
+        "label": "listRepo",
+        "gitUser": repo,
+    }
+
+    repos = []
+    langtoken = os.environ["GITKEY"]
+    langheader = {"Authorization": "token " + langtoken}
+    for e in collectData(action, auth):
+        langData = requests.get(
+            'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
+            headers=langheader
+        ) 
+        repoList = langData.json()
+        repos.append(repoList)
+
+    out = {}
+    for listEntry in repos:
+        for key in listEntry:
+            if key in out.keys():
+                out[key] += listEntry[key]
+            else:
+                out[key] = listEntry[key]
+
+    all = 0
+    for key in out:
+        all += out[key]
+    for key in out:
+        out[key] = ((out[key] * 10000) // all) / 100 # Real number representing percentage in form 3.32
+    return out # Dictionary with a language and a percentage
+
 ### unused?    
 def apiRepoList(request):
     repo = request.GET.get("search_term")
@@ -245,40 +284,6 @@ def search(request):
             userStats['following'] = data['following']
             userStats['created_at'] = data['created_at']
         cleanedData.append(userStats)
-
-        ##languages
-        repos = []
-        langtoken = os.environ["GITKEY"]
-        langheader = {"Authorization": "token " + langtoken}
-        for e in collectData(action, auth):
-            langData = requests.get(
-                'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
-                headers=langheader
-            ) 
-            repoList = langData.json()
-            repos.append(repoList)
-
-#            langList = []
- #           langList.append(langData.json())
-  #          langCleanedData = []
-   #         langStats = {}
-    #        for lang in langList:
-     #           langStats['name'] = lang['name']
-      #      langCleanedData.append(langStats)
-
-        # Why is this here? I dont think it is needed.
-        # # Get a list of dictionaries full of languages
-        # token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
-        # header = {"Authorization": "token " + token}
-        # repos = []
-        # for e in collectData(action, auth):
-        #     response = requests.get(
-        #         'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
-        #         headers=header    
-        #     )
-        #     repoList = response.json()
-        #     repos.append(repoList)
-        # # END
 
         ctx = {
         'data': userStats,
