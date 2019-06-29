@@ -4,6 +4,8 @@ python:
   - "3.7"
 
 install:
+  - apt update 
+  - apt install --only-upgrade sqlite3
   - pip3 install -r requirements.txt -U
   - python3 manage.py migrate
 
