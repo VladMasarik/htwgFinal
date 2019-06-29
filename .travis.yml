@@ -5,9 +5,6 @@ python:
 
 install:
   - python3 xxx.py
-  - sudo apt update 
-  - sudo apt install sqlite3
-  - python3 xxx.py
   - pip3 install -r requirements.txt -U
   - python3 xxx.py
 
