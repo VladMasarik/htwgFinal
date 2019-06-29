@@ -1,12 +1,10 @@
-from django.shortcuts import render, HttpResponse
 import requests, json, os
-from django.views import View
-from django.http import JsonResponse
-
-from gitistics.forms import UserForm
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.shortcuts import render, HttpResponse
 from django.contrib.auth import login
-from django.http import HttpResponseRedirect, HttpResponse
+from django.views import View
 from django.urls import reverse
+from gitistics.forms import UserForm
 
 def index(request):
     username, _ = authenticate(request)
@@ -14,7 +12,9 @@ def index(request):
         cont = {
             "user": {
                 "logged" : "true",
-                "username": username
+                "username": username,
+            ### lenght ? for number of registerd users -> end of index.html 
+            "groupList": callUserService({}, "/listGroups")
             }
         } 
         return render(request, 'gitistics/index.html', context=cont)
@@ -135,6 +135,7 @@ def userlogin(request):
     else:
         return render(request, 'gitistics/login.html', {})
 
+########### todo
 def statistics(request):
     token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
     header = {"Authorization": "token " + token}
@@ -156,6 +157,7 @@ def statistics(request):
     cleanedData.append(userStats)
 
     return render(request, 'gitistics/statistics.html', {'data': userStats})
+########### todo
 
 def collectData(action, auth = None):
     """
@@ -188,7 +190,8 @@ def collectData(action, auth = None):
         names.append(e["name"])   
 
     return names
-    
+
+### unused?    
 def apiRepoList(request):
     repo = request.GET.get("search_term")
     username = request.COOKIES.get("username")
@@ -223,9 +226,6 @@ def search(request):
         "gitUser": repo,
     }
     
-
-    
-
     if repo is not None:
         token = os.environ["GITKEY"]
         header = {"Authorization": "token " + token}
@@ -239,15 +239,32 @@ def search(request):
         userStats = {}
         for data in dataList:
             userStats['name'] = data['name']
-            userStats['email'] = data['email']
             userStats['public_repos'] = data['public_repos']
             userStats['avatar_url'] = data['avatar_url']
             userStats['followers'] = data['followers']
             userStats['following'] = data['following']
-            userStats['location'] = data['location']
             userStats['created_at'] = data['created_at']
-            userStats['updated_at'] = data['updated_at']
         cleanedData.append(userStats)
+
+        ##languages
+        repos = []
+        langtoken = os.environ["GITKEY"]
+        langheader = {"Authorization": "token " + langtoken}
+        for e in collectData(action, auth):
+            langData = requests.get(
+                'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
+                headers=langheader
+            ) 
+            repoList = response.json()
+            repos.append(repoList)
+
+#            langList = []
+ #           langList.append(langData.json())
+  #          langCleanedData = []
+   #         langStats = {}
+    #        for lang in langList:
+     #           langStats['name'] = lang['name']
+      #      langCleanedData.append(langStats)
 
         # Why is this here? I dont think it is needed.
         # # Get a list of dictionaries full of languages
@@ -264,7 +281,7 @@ def search(request):
         # # END
 
         ctx = {
-        'data': userStats,
+        'data': {userStats, langStats},
         'repoList': collectData(action, auth)
         }
         return render(request, 'gitistics/search.html', context=ctx)
