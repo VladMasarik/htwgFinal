@@ -3,7 +3,6 @@
 ## Build docker files
 
 
-
 docker build -t docker.io/vladmasarik/htwg-web .
 docker push docker.io/vladmasarik/htwg-web
 

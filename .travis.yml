@@ -4,14 +4,7 @@ python:
   - "3.7"
 
 install:
-  - python3 xxx.py
   - pip3 install -r requirements.txt -U
-  - python3 xxx.py
 
 script:
-  - pwd
-  - python3 manage.py runserver &
-  - FLASK_APP=micro_user/main.py flask run --port 5000 &
-  - FLASK_APP=micro_data/main.py flask run --port 5001 &
-  - python3 manage.py test
-  - pytest -v
+  - ./travis.sh
