@@ -13,19 +13,6 @@ def getDynamo():
     return db.Table('groups')
 
 
-def removeEmptyString(dic):
-    for e in dic:
-        if isinstance(dic[e], dict):
-            dic[e] = removeEmptyString(dic[e])
-        if (isinstance(dic[e], str) and dic[e] == ""):
-            print("##### Dicrionary:\n", dic, "\n##### Entry:\n", e)
-            dic[e] = None
-        if isinstance(dic[e], list):
-            for entry in dic[e]:
-                removeEmptyString(entry)
-    return dic
-        
-
 def isGroupInBucket(client, groupName):
     """
     Does S3 contain data for the  group X?
@@ -39,9 +26,6 @@ def isGroupInBucket(client, groupName):
                 return True
     return False
     
-
-def putInBucket(obj, data):
-    obj.put(Body=data)
 
 def userRepos(gitUser):
     token = os.environ["GITKEY"]
@@ -80,6 +64,7 @@ def get_GitHub_Users_For_User(user):
     """
     For registered user X return all GitHub users that X can access on S3
     """
+    # Retrieve all groups saved in S3
     s3 = boto3.client("s3")
     response = s3.list_objects(
         Bucket="kittyfolder",
@@ -88,8 +73,14 @@ def get_GitHub_Users_For_User(user):
     if "Contents" in response.keys():
         for obj in response['Contents']:
             bucketGroups.append(obj["Key"])
+
+    # Retrieve all groups the user is in
     userDynamoGroups = listGroupsForUser(user)
+
+    # Do intersection of these two groups
     validGroups = list(set(userDynamoGroups) & set(bucketGroups))
+
+    # Retrieve data from S3 that the user has access to
     allBody = {}
     for group in validGroups:
         body = s3.get_object(Bucket = "kittyfolder", Key=group)
@@ -120,17 +111,13 @@ def root():
 
             if gitUser in githubUsers:
                 return jsonify({"repositories": githubUsers[gitUser]["repoList"]})
-            
-            body = s3.get_object(Bucket = "kittyfolder", Key=user)
-            body = json.loads(body["Body"].read().decode("utf-8")) 
+            body = {}
+            if len(githubUsers) is not 0:
+                body = s3.get_object(Bucket = "kittyfolder", Key=user)
+                body = json.loads(body["Body"].read().decode("utf-8")) 
             body[gitUser] = {"repoList": userRepos(gitUser)}
             s3.put_object(Key=user, Bucket="kittyfolder", Body=json.dumps(body))
             return jsonify({"repositories": body[gitUser]["repoList"]})
-            # if gitUser not in groupData:
-
-            #     # No need for empty string since it is a S3 and not Dynamodb anymore?
-            #     # dbData = removeEmptyString(groupData)
-            #     putInBucket(bucket, groupData)
 
     else:
         return jsonify({"repositories": userRepos(gitUser)})
