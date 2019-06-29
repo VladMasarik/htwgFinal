@@ -255,7 +255,7 @@ def search(request):
                 'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
                 headers=langheader
             ) 
-            repoList = response.json()
+            repoList = langData.json()
             repos.append(repoList)
 
 #            langList = []
@@ -281,7 +281,7 @@ def search(request):
         # # END
 
         ctx = {
-        'data': {userStats, langStats},
+        'data': userStats,
         'repoList': collectData(action, auth)
         }
         return render(request, 'gitistics/search.html', context=ctx)
