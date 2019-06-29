@@ -13,6 +13,8 @@ install:
 
 script:
   - pwd
+  - ./manage.py migrate
+  - python3 manage.py migrate
   - python3 manage.py runserver &
   - FLASK_APP=micro_user/main.py flask run --port 5000 &
   - FLASK_APP=micro_data/main.py flask run --port 5001 &
