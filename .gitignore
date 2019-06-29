@@ -2,3 +2,4 @@ __pycache__
 migrations
 aws-id
 aws-pass
+db.sqlite3
