@@ -1,7 +1,6 @@
 from django.shortcuts import render, HttpResponse
 import requests, json, os
 from django.views import View
-from .getfromgithub import SearchRepositories, SearchCommits
 from django.http import JsonResponse
 
 from gitistics.forms import UserForm

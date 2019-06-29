@@ -1,5 +1,4 @@
 from django import forms
-from gitistics.models import UserProfileInfo
 from django.contrib.auth.models import User
 
 class UserForm(forms.ModelForm):

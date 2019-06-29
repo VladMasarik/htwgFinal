@@ -1,7 +1,7 @@
-from django.contrib import admin
+# from django.contrib import admin
 
-from gitistics.models import UserProfileInfo, User
+# from gitistics.models import UserProfileInfo, User
 
-# Register your models here.
+# # Register your models here.
 
-admin.site.register(UserProfileInfo)
+# admin.site.register(UserProfileInfo)
