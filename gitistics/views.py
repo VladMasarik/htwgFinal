@@ -56,6 +56,15 @@ def callUserService(data, path):
     
     return resp.json()
 
+def parsePOSTRequestBody(request):
+    body = request.read().decode("utf-8")
+    body = body.split("&")
+    result = {}
+    for parameter in body:
+        parameter = parameter.split("=")
+        result[parameter[0]] = parameter[1]
+    return result
+
 def profile(request):
     username, password = authenticate(request)
 
@@ -100,18 +109,14 @@ def authenticate(request = None, username = None, password = None):
 def usersignup(request):
     registered = False
     if request.method == 'POST':
-        user_form = UserForm(data=request.POST)
-        if user_form.is_valid():
-            addUser(user_form.cleaned_data["username"], user_form.cleaned_data["password"])
-            resp = HttpResponseRedirect("/")
-            resp.set_cookie("username", user_form.cleaned_data["username"])
-            resp.set_cookie("password", user_form.cleaned_data["password"])
-            return resp
-        else:
-            print(user_form.errors)
-    else:
-        user_form = UserForm()
-    return render(request,'gitistics/signup.html', {'user_form':user_form, 'registered':registered})
+        
+        details = parsePOSTRequestBody(request)
+        addUser(details["username"], details["password"])
+        resp = HttpResponseRedirect("/")
+        resp.set_cookie("username", details["username"])
+        resp.set_cookie("password", details["password"])
+        return resp
+    return render(request,'gitistics/signup.html', {'registered':registered})
 
 def userlogin(request):
     if request.method == 'POST':

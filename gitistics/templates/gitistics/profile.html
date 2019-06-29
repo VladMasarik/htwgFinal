@@ -56,7 +56,13 @@
     <h1>Summary</h1>
     <ul>
       {% for group in groupList %}
-      <li><p>{{group}} </p><a href="/joinGroup?group={{group}}">join </a><a href="/leaveGroup?group={{group}}">leave</a></li>
+      <li>{{group}}</li>
+      <form action="/joinGroup?group={{group}}" method="get">
+        <input type="submit" value="Join">
+      </form> 
+      <form action="/leaveGroup?group={{group}}" method="get">
+        <input type="submit" value="Leave">
+      </form> 
       {% endfor %}
   </ul>
     <div class="w3-row-padding w3-margin-bottom">
