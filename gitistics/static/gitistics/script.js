@@ -12,43 +12,32 @@ function myFunction() {
 // Piechart for languages
 document.getElementById("langButton").addEventListener("click", function () {
 
-  // Read current URL
-  const urlParams = new URLSearchParams(window.location.search);
-  // get parameter "search_term"
-  const searchRepo = urlParams.get('search_term');
-  // print it to console
-  console.log(searchRepo)
-
-  // create AJAX request
-  $.ajax({
-    // To this URL; backtics "``" are supposed to do a format on that string
-    url: `/api/repos/repoList/searchRepo/languages`,
-    // After you receive an answer run this fucntion
-    success: function (result) {
-      // Result is the JSON
-      //repoList = JSON.parse(result)
-      list = result["list"]
-      list.forEach(function (lang) {
-
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-          var data = google.visualization.arrayToDataTable([
-            ['Language', 'No'],
-            [lang, 2],
-          ]);
+
+          var jsonData = $.ajax({
+            url: "/api/GithubUserLanguages/",
+            dataType: "json",
+            async: false
+            }).responseText;
+            
+          var data = new google.visualization.DataTable(jsonData);
+  
+    //      var data = google.visualization.arrayToDataTable([
+    //        ['Language', 'No'],
+    //        ['Java', 2],
+    //      ]);
 
           var options = {
+            height: 300
           };
 
           var chart = new google.visualization.PieChart(document.getElementById('piechart'));
           chart.draw(data, options);
         }
       });
-    }
-  });
-});
 
 
 // Table for repositories

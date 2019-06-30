@@ -229,8 +229,7 @@ def apiGithubUserLanguages(request):
     for key in out:
         out[key] = ((out[key] * 10000) // all) / 100 # Real number representing percentage in form 3.32
     return out # Dictionary with a language and a percentage
-
-### unused?    
+ 
 def apiRepoList(request):
     repo = request.GET.get("search_term")
     username = request.COOKIES.get("username")
@@ -287,7 +286,8 @@ def search(request):
 
         ctx = {
         'data': userStats,
-        'repoList': collectData(action, auth)
+        'repoList': collectData(action, auth),
+        'langsList': apiGithubUserLanguages(request)
         }
         return render(request, 'gitistics/search.html', context=ctx)
 
