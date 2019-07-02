@@ -8,6 +8,8 @@ function myFunction() {
   }
 }
 
+
+// Number of registered users
 function regUsers() {
   $.ajax({
     url: `/api/groupUserList`,
@@ -26,26 +28,31 @@ document.getElementById("langButton").addEventListener("click", function () {
   google.charts.setOnLoadCallback(drawChart);
 
   function drawChart() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const search = urlParams.get('search_term');
+    $.ajax({
+      url: `/api/languageList?search_term=${search}`,
+      success: function (result) {
+        //      result = Object.keys(result["languageList"])
+        lang = Object.keys(result)
+        lang.forEach(function (key) {
+          perc = result[key];
+        });
+        var list = [['Language', 'Percentage']]
+        list.push.apply(list, [lang, perc])
 
-    var jsonData = $.ajax({
-      url: "/api/GithubUserLanguages/",
-      dataType: "json",
-      async: false
-    }).responseText;
+        var data = google.visualization.arrayToDataTable(list);
 
-    var data = new google.visualization.DataTable(jsonData);
+        var options = {
+          height: 300
+        };
 
-    //      var data = google.visualization.arrayToDataTable([
-    //        ['Language', 'No'],
-    //        ['Java', 2],
-    //      ]);
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+      }
 
-    var options = {
-      height: 300
-    };
+    });
 
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-    chart.draw(data, options);
   }
 });
 
@@ -85,21 +92,12 @@ document.getElementById("reposButton").addEventListener("click", function () {
     cells[3].innerHTML = "<b>Language</b>";
     cells[4].innerHTML = "<b>Size</b>";
 
-    // Read current URL
     const urlParams = new URLSearchParams(window.location.search);
-    // get parameter "search_term"
     const searchRepo = urlParams.get('search_term');
-    // print it to console
-    console.log(searchRepo)
 
-    // create AJAX request
     $.ajax({
-      // To this URL; backtics "``" are supposed to do a format on that string
       url: `/api/repoList?search_term=${searchRepo}`,
-      // After you receive an answer run this fucntion
       success: function (result) {
-        // Result is the JSON
-        //repoList = JSON.parse(result)
         list = result["list"]
         list.forEach(function (repo) {
 

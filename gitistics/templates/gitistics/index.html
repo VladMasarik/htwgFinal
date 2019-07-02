@@ -13,125 +13,131 @@
 
 <body>
 
-<!-- Navbar -->
-<div class="w3-top">
-  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu">
-      <i class="fa fa-bars"></i>
-    </a>
-    <a href="#home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+  <!-- Navbar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red"
+        href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu">
+        <i class="fa fa-bars"></i>
+      </a>
+      <a href="#home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    </div>
   </div>
-</div>
 
-<!-- Header -->
-<header class="w3-container w3-red w3-center" style="padding:128px 16px" id="home">
-  <h1 class="w3-margin w3-jumbo">GITISTICS</h1>
-  <p class="w3-xlarge">Search Github. Get statistics.</p>
-  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-  {% if user.logged %}
-    <a href="logout">
-      <button class="w3-bar-item w3-button w3-dark-grey w3-hide-small w3-padding-large w3-hover-white">Log out</button>
-    </a>
-  {% else %}
-    <a href="./login">
-      <button class="w3-bar-item w3-button w3-dark-grey w3-hide-small w3-padding-large w3-hover-white">Log in</button>
-    </a>
-  {% endif %}
-  <a href="./signup">
-    <button class="w3-bar-item w3-button w3-dark-grey w3-hide-small w3-padding-large w3-hover-white">Sign up</button>
-  </a>
-</div>
-</header>
+  <!-- Header -->
+  <header class="w3-container w3-red w3-center" style="padding:128px 16px" id="home">
+    <h1 class="w3-margin w3-jumbo">GITISTICS</h1>
+    <p class="w3-xlarge">Search Github. Get statistics.</p>
+    <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+      {% if user.logged %}
+      <a href="logout">
+        <button class="w3-bar-item w3-button w3-dark-grey w3-hide-small w3-padding-large w3-hover-white">Log
+          out</button>
+      </a>
+      {% else %}
+      <a href="./login">
+        <button class="w3-bar-item w3-button w3-dark-grey w3-hide-small w3-padding-large w3-hover-white">Log in</button>
+      </a>
+      {% endif %}
+      <a href="./signup">
+        <button class="w3-bar-item w3-button w3-dark-grey w3-hide-small w3-padding-large w3-hover-white">Sign
+          up</button>
+      </a>
+    </div>
+  </header>
 
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-  {% if user.logged %}
+  <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    {% if user.logged %}
     <h1 class="w3-margin w3-xlarge"><i class="fa fa-hand-o-right w3-text-red"></i> Hello {{ user.username }}</h1>
-  {% else %}
+    {% else %}
     <h1 class="w3-margin w3-xlarge">Log in or Sign up.</h1>
-  {% endif %}
-</div>
+    {% endif %}
+  </div>
 
-<!-- Groups Grid -->
-<div class="w3-row-padding w3-light-gray w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-third w3-center">
-      <i class="fa fa-users w3-padding-64 w3-text-red w3-margin-right"></i>
-    </div>
-
-    <div class="w3-twothird">
-      <h1>Group manager</h1>
-      <h5 class="w3-padding-32">Click to join or leave groups.
-      <div style="text-align: left">
-        <a href="./profile" style="font-size:20px">
-          <button class="w3-button w3-padding-large w3-dark-grey" style="margin-top:64px">Groups</button>
-        </a>
+  <!-- Groups Grid -->
+  <div class="w3-row-padding w3-light-gray w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-third w3-center">
+        <i class="fa fa-users w3-padding-64 w3-text-red w3-margin-right"></i>
       </div>
-    </h5>
+
+      <div class="w3-twothird">
+        <h1>Group manager</h1>
+        <h5 class="w3-padding-32">Click to join or leave groups.
+          <div style="text-align: left">
+            <a href="./profile" style="font-size:20px">
+              <button class="w3-button w3-padding-large w3-dark-grey" style="margin-top:64px">Groups</button>
+            </a>
+          </div>
+        </h5>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- First Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Analyze a user:</h1>
-      <h5 class="w3-padding-32">Search Github by a username.</h5>
+  <!-- First Grid -->
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <h1>Analyze a user:</h1>
+        <h5 class="w3-padding-32">Search Github by a username.</h5>
 
-      <form action="{% url 'gitistics:search' %}" method="GET">
+        <form action="{% url 'gitistics:search' %}" method="GET">
           <input type="text" name="search_term" class="form-control">
           <input type="submit" value="Submit">
-      </form>
+        </form>
 
-      <div style="text-align: left">
-        <a href="./search" style="font-size:20px">
-          <button class="w3-button w3-padding-large w3-dark-grey" style="margin-top:64px">Search</button>
-        </a>
+        <div style="text-align: left">
+          <a href="./search" style="font-size:20px">
+            <button class="w3-button w3-padding-large w3-dark-grey" style="margin-top:64px">Search</button>
+          </a>
+        </div>
+
+        <br>
+        <p class="w3-text-grey">Every registered and unregistered user can analyze his data and therefore see what are
+          the features of the application. Only a registered user can save the statistics.</p>
       </div>
-  
-      <br>
-      <p class="w3-text-grey">Every registered and unregistered user can analyze his data and therefore see what are the features of the application. Only a registered user can save the statistics.</p>
-    </div>
 
-    <div class="w3-third w3-center">
-      <i class="fa fa-user w3-padding-64 w3-text-red"></i>
+      <div class="w3-third w3-center">
+        <i class="fa fa-user w3-padding-64 w3-text-red"></i>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Second Grid -->
-<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-third w3-center">
-      <i class="fa fa-th w3-padding-64 w3-text-red w3-margin-right"></i>
-    </div>
-
-    <div class="w3-twothird">
-      <h1>Analyze my profile:</h1>
-      <h5 class="w3-padding-32">Click on the button to analyze.
-      <div style="text-align: left">
-        <a href="./statistics" style="font-size:20px">
-          <button class="w3-button w3-padding-large w3-dark-grey" style="margin-top:64px">Analyze</button>
-        </a>
+  <!-- Second Grid -->
+  <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-third w3-center">
+        <i class="fa fa-th w3-padding-64 w3-text-red w3-margin-right"></i>
       </div>
-    </h5>
 
-    <p class="w3-text-grey">A registered user can analyze his data by simply clicking on the anlyze button. After getting the statistics, a user can save his data.</p>
+      <div class="w3-twothird">
+        <h1>Analyze my profile:</h1>
+        <h5 class="w3-padding-32">Click on the button to analyze.
+          <div style="text-align: left">
+            <a href="./statistics" style="font-size:20px">
+              <button class="w3-button w3-padding-large w3-dark-grey" style="margin-top:64px">Analyze</button>
+            </a>
+          </div>
+        </h5>
+
+        <p class="w3-text-grey">A registered user can analyze his data by simply clicking on the anlyze button. After
+          getting the statistics, a user can save his data.</p>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-    <h1 class="w3-margin w3-xlarge" id="showRegUsers">Registered users: {{ groupList.length }}</h1>
-</div>
+  <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge" id="showRegUsers">Registered users: </h1>
+  </div>
 
-<!-- Footer -->
-<footer class="w3-container w3-padding-64 w3-center w3-opacity">  
- <p>Cloud application development project</p>
-</footer>
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-64 w3-center w3-opacity">
+    <p>Cloud application development project</p>
+  </footer>
 
-<script src="https://code.jquery.com/jquery-3.4.1.js" type="text/javascript"></script>
-<script src="{% static 'gitistics/script.js' %}" type="text/javascript"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.js" type="text/javascript"></script>
+  <script src="{% static 'gitistics/script.js' %}" type="text/javascript"></script>
 
 </body>
+
 </html>

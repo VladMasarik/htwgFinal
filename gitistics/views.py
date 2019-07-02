@@ -228,7 +228,13 @@ def apiGithubUserLanguages(request):
         all += out[key]
     for key in out:
         out[key] = ((out[key] * 10000) // all) / 100 # Real number representing percentage in form 3.32
-    return out # Dictionary with a language and a percentage
+    #return out   # Dictionary with a language and a percentage
+
+    ctx = {
+       "languageList": out
+    }
+    return JsonResponse(ctx)
+
  
 def apiRepoList(request):
     repo = request.GET.get("search_term")
