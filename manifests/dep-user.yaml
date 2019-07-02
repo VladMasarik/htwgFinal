@@ -5,6 +5,7 @@ metadata:
   namespace: default
   labels:
     app: user
+    project: htwg
 spec:
   replicas: 1
   selector:
@@ -16,9 +17,11 @@ spec:
       labels:
         app: user
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - name: user
-        image: vladmasarik/htwg-user
+        image: vladmasarik/htwg-user:latest
+        imagePullPolicy: "Always"
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:

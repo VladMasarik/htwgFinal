@@ -5,6 +5,7 @@ metadata:
   namespace: default
   labels:
     app: web
+    project: htwg
 spec:
   replicas: 1
   selector:
@@ -16,9 +17,11 @@ spec:
       labels:
         app: web
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - name: web
-        image: vladmasarik/htwg-web
+        imagePullPolicy: "Always"
+        image: vladmasarik/htwg-web:latest
         ports:
         - containerPort: 8080
           name: http
