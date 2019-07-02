@@ -21,7 +21,10 @@ oc apply -f manifests
 
 
 ## Create secrets
-kubectl create secret generic aws-web --from-file=./aws-id --from-file=./aws-pass
+kubectl create secret generic aws-web \
+ --from-file=/home/vmasarik/projects/htwgFinal/aws-id \
+ --from-file=/home/vmasarik/projects/htwgFinal/aws-pass \
+ --from-file=/home/vmasarik/projects/htwgFinal/gitkey
 
 
 ## Run all servers
@@ -55,3 +58,19 @@ oc delete -f manifests --now && oc create -f manifests && oc get po
 
 ## Start tests
 Be in the root of this project and `python3 manage.py test && pytest -v`
+
+
+## Update app
+`kubectl set image deployment/my-deployment <container>=<image>:<new-version>`
+`oc set image deploy/data data=VladMasarik/htwg`
+
+
+oc set image deploy/data data=vladmasarik/htwg-data
+oc set image deploy/user user=vladmasarik/htwg-user
+oc set image deploy/web web=vladmasarik/htwg-web
+
+
+
+oc set image deploy/data data=vladmasarik/htwg-data:latest
+oc set image deploy/user user=vladmasarik/htwg-user:latest
+oc set image deploy/web web=vladmasarik/htwg-web:latest
