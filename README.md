@@ -74,3 +74,20 @@ oc set image deploy/web web=vladmasarik/htwg-web
 oc set image deploy/data data=vladmasarik/htwg-data:latest
 oc set image deploy/user user=vladmasarik/htwg-user:latest
 oc set image deploy/web web=vladmasarik/htwg-web:latest
+
+## Auto scale
+
+
+Set limits on the deployments.
+Download the metric-server and deploy it.
+
+git clone git@github.com:kubernetes-incubator/metrics-server.git
+oc create -f deploy/1.8+/
+
+the create autoscaler
+
+oc autoscale deploy/data --cpu-percent=20 --min=1 --max=10
+oc autoscale deploy/user --cpu-percent=20 --min=1 --max=10
+oc autoscale deploy/web --cpu-percent=20 --min=1 --max=10
+
+

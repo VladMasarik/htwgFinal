@@ -21,6 +21,9 @@ spec:
       containers:
       - name: web
         imagePullPolicy: "Always"
+        resources:
+          requests:
+            cpu: 100m
         image: vladmasarik/htwg-web:latest
         ports:
         - containerPort: 8080

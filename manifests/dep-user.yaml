@@ -22,6 +22,9 @@ spec:
       - name: user
         image: vladmasarik/htwg-user:latest
         imagePullPolicy: "Always"
+        resources:
+          requests:
+            cpu: 100m
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
