@@ -290,9 +290,9 @@ def search(request):
         ) 
 
         ctx = {
+        'user': username,
         'data': userData.json(),
-        'repoList': collectData(action, auth),
-        'langsList': apiGithubUserLanguages(request)
+        'repoList': collectData(action, auth)
         }
         return render(request, 'gitistics/search.html', context=ctx)
 

@@ -21,6 +21,20 @@ function regUsers() {
 window.onload = regUsers;
 
 
+// Number of languages
+function noOfLangs() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const search = urlParams.get('search_term');
+  $.ajax({
+    url: `/api/languageList?search_term=${search}`,
+    success: function (result) {
+      document.getElementById("showNoOfLangs").innerHTML += Object.keys(result["languageList"]).length;
+    }
+  });
+}
+window.onload = noOfLangs;
+
+
 // Piechart for languages
 document.getElementById("langButton").addEventListener("click", function () {
 
