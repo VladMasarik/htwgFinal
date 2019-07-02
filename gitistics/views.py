@@ -269,6 +269,11 @@ def search(request):
         "label": "listRepo",
         "gitUser": repo,
     }
+
+    SecondAction = {
+        "label": "detailUser",
+        "gitUser": repo,
+    }
     
     if repo is not None:
         token = os.environ["GITKEY"]
@@ -277,21 +282,9 @@ def search(request):
             'https://api.github.com/users/{}'.format(repo),
             headers=header
         ) 
-        dataList = []
-        dataList.append(userData.json())
-        cleanedData = []
-        userStats = {}
-        for data in dataList:
-            userStats['name'] = data['name']
-            userStats['public_repos'] = data['public_repos']
-            userStats['avatar_url'] = data['avatar_url']
-            userStats['followers'] = data['followers']
-            userStats['following'] = data['following']
-            userStats['created_at'] = data['created_at']
-        cleanedData.append(userStats)
 
         ctx = {
-        'data': userStats,
+        'data': userData.json()[0],
         'repoList': collectData(action, auth),
         'langsList': apiGithubUserLanguages(request)
         }
