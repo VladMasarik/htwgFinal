@@ -33,13 +33,11 @@ document.getElementById("langButton").addEventListener("click", function () {
     $.ajax({
       url: `/api/languageList?search_term=${search}`,
       success: function (result) {
-        //      result = Object.keys(result["languageList"])
-        lang = Object.keys(result)
+        var lang = Object.keys(result["languageList"]);
+        var list = [["Language", "Percentage"]];
         lang.forEach(function (key) {
-          perc = result[key];
+          list.push([key, result["languageList"][key]]);
         });
-        var list = [['Language', 'Percentage']]
-        list.push.apply(list, [lang, perc])
 
         var data = google.visualization.arrayToDataTable(list);
 

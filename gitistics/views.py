@@ -290,7 +290,7 @@ def search(request):
         ) 
 
         ctx = {
-        'data': userData.json()[0],
+        'data': userData.json(),
         'repoList': collectData(action, auth),
         'langsList': apiGithubUserLanguages(request)
         }
