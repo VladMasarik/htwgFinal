@@ -31,7 +31,7 @@ document.getElementById("langButton").addEventListener("click", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const search = urlParams.get('search_term');
     $.ajax({
-      url: `/api/languageList?search_term=${search}`,
+      url: `/api/languageList/?search_term=${search}`,
       success: function (result) {
         var lang = Object.keys(result["languageList"]);
         var list = [["Language", "Percentage"]];
@@ -48,9 +48,7 @@ document.getElementById("langButton").addEventListener("click", function () {
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
       }
-
     });
-
   }
 });
 
