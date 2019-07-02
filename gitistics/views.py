@@ -13,9 +13,9 @@ def index(request):
             "user": {
                 "logged" : "true",
                 "username": username,
+            },
             ### lenght ? for number of registerd users -> end of index.html 
             "groupList": callUserService({}, "/listGroups")
-            }
         } 
         return render(request, 'gitistics/index.html', context=cont)
     return render(request, 'gitistics/index.html')
@@ -250,6 +250,12 @@ def apiRepoList(request):
         }
         return JsonResponse(ctx)
     return JsonResponse({"list": ["one","two","three"]})
+
+def apiGroupUserList(request):
+    ctx = {
+       "groupList": callUserService({}, "/listGroups")
+    }
+    return JsonResponse(ctx)
 
 def search(request):
     repo = request.GET.get("search_term")

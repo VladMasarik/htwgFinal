@@ -8,36 +8,48 @@ function myFunction() {
   }
 }
 
+function regUsers() {
+  var html = '';
+  $.ajax({
+    url: `/api/groupUserList`,
+    success: function (result) {
+      html += Object.keys(result["groupList"]).length;
+    }
+  });
+  return html;
+}
+document.getElementById("showRegUsers").innerHTML = regUsers();
+
 
 // Piechart for languages
 document.getElementById("langButton").addEventListener("click", function () {
 
-        google.charts.load('current', { 'packages': ['corechart'] });
-        google.charts.setOnLoadCallback(drawChart);
+  google.charts.load('current', { 'packages': ['corechart'] });
+  google.charts.setOnLoadCallback(drawChart);
 
-        function drawChart() {
+  function drawChart() {
 
-          var jsonData = $.ajax({
-            url: "/api/GithubUserLanguages/",
-            dataType: "json",
-            async: false
-            }).responseText;
-            
-          var data = new google.visualization.DataTable(jsonData);
-  
+    var jsonData = $.ajax({
+      url: "/api/GithubUserLanguages/",
+      dataType: "json",
+      async: false
+    }).responseText;
+
+    var data = new google.visualization.DataTable(jsonData);
+
     //      var data = google.visualization.arrayToDataTable([
     //        ['Language', 'No'],
     //        ['Java', 2],
     //      ]);
 
-          var options = {
-            height: 300
-          };
+    var options = {
+      height: 300
+    };
 
-          var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-          chart.draw(data, options);
-        }
-      });
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    chart.draw(data, options);
+  }
+});
 
 
 // Table for repositories
