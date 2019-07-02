@@ -9,16 +9,14 @@ function myFunction() {
 }
 
 function regUsers() {
-  var html = '';
   $.ajax({
     url: `/api/groupUserList`,
     success: function (result) {
-      html += Object.keys(result["groupList"]).length;
+      document.getElementById("showRegUsers").innerHTML += Object.keys(result["groupList"]).length;
     }
   });
-  return html;
 }
-document.getElementById("showRegUsers").innerHTML = regUsers();
+window.onload = regUsers;
 
 
 // Piechart for languages
