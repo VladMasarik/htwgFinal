@@ -12,7 +12,7 @@ function myFunction() {
 // Number of registered users
 function regUsers() {
   $.ajax({
-    url: `/api/groupUserList`,
+    url: `/api/groupUserList/`,
     success: function (result) {
       document.getElementById("showRegUsers").innerHTML += Object.keys(result["groupList"]).length;
     }
@@ -26,7 +26,7 @@ function noOfLangs() {
   const search = urlParams.get('search_term');
   if (search !== null && search !== '') {
     $.ajax({
-      url: `/api/languageList?search_term=${search}`,
+      url: `/api/languageList/?search_term=${search}`,
       success: function (result) {
         document.getElementById("showNoOfLangs").innerHTML = Object.keys(result["languageList"]).length;
       }
@@ -41,7 +41,7 @@ function noOfForks() {
   const search = urlParams.get('search_term');
   if (search !== null && search !== '') {
     $.ajax({
-      url: `/api/repoList?search_term=${search}`,
+      url: `/api/repoList/?search_term=${search}`,
       success: function (result) {
         list = result["list"]
         repos = list["repositories"]
@@ -62,7 +62,7 @@ function noOfIssues() {
   const search = urlParams.get('search_term');
   if (search !== null && search !== '') {
     $.ajax({
-      url: `/api/repoList?search_term=${search}`,
+      url: `/api/repoList/?search_term=${search}`,
       success: function (result) {
         list = result["list"]
         repos = list["repositories"]
@@ -83,7 +83,7 @@ function noOfWatchers() {
   const search = urlParams.get('search_term');
   if (search !== null && search !== '') {
     $.ajax({
-      url: `/api/repoList?search_term=${search}`,
+      url: `/api/repoList/?search_term=${search}`,
       success: function (result) {
         list = result["list"]
         repos = list["repositories"]
@@ -104,7 +104,7 @@ function noOfStars() {
   const search = urlParams.get('search_term');
   if (search !== null && search !== '') {
     $.ajax({
-      url: `/api/repoList?search_term=${search}`,
+      url: `/api/repoList/?search_term=${search}`,
       success: function (result) {
         list = result["list"]
         repos = list["repositories"]
@@ -199,7 +199,7 @@ document.getElementById("reposButton").addEventListener("click", function () {
     const searchRepo = urlParams.get('search_term');
 
     $.ajax({
-      url: `/api/repoList?search_term=${searchRepo}`,
+      url: `/api/repoList/?search_term=${searchRepo}`,
       success: function (result) {
         list = result["list"]
         repos = list["repositories"]
