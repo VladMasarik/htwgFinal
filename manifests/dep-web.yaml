@@ -23,7 +23,7 @@ spec:
         imagePullPolicy: "Always"
         resources:
           requests:
-            cpu: 200m
+            cpu: 100m
         env:
         - name: GITKEY
           valueFrom:
