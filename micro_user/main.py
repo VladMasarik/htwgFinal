@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import boto3, requests, os
+import boto3, requests, os, json
 app = Flask(__name__)
 
 def getDynamo():
@@ -20,7 +20,11 @@ def userDetail():
     data = request.json
     for i in table.scan()["Items"]:
         if i["name"] == data["user"]:
-            return jsonify({"reads": i["reads"], "writes": i["writes"]})
+            result = {
+                "reads": int(i["reads"]),
+                "writes": int(i["writes"])
+            }
+            return jsonify(result)
     print("Did not find user")
     return jsonify({"reads": 0, "writes": 0})
             
