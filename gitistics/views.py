@@ -69,7 +69,7 @@ def parsePOSTRequestBody(request):
     return result
 
 def profile(request):
-    username, password = authenticate(request)
+    username, _ = authenticate(request)
 
     if username is not None:
         # /joinGroup?group{{group}}">join</p><p href="/leaveGroup?group{{group}}
@@ -78,8 +78,9 @@ def profile(request):
             'user': username,
             "groupList": callUserService({}, "/listGroups"),
             "billing": {
-                "read": resp["read"],
-                "write": resp["write"]
+                "reads": resp["reads"],
+                "writes": resp["writes"],
+                "amount": resp["reads"] * 2 + resp["writes"] * 8
             }
         }
         
