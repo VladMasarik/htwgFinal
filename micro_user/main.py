@@ -28,7 +28,6 @@ def userDetail():
     print("Did not find user")
     return jsonify({"reads": 0, "writes": 0})
             
-
 @app.route("/addUsage", methods=['GET', 'POST'])
 def addUsage():
     table = getDynamo()
@@ -54,7 +53,6 @@ def addUsage():
             )
             return jsonify({"response": "Group {} reads or writes was increased.".format(group)})
 
-
 @app.route("/listGroupsPerUser", methods=['GET', 'POST'])
 def listGroupsPerUser():
     table = getDynamo()
@@ -66,6 +64,10 @@ def listGroupsPerUser():
         if any(username in name for name in members):
             groupNames.append(i["name"])
     return jsonify(groupNames)
+
+@app.route("/data", methods=['GET', 'POST'])
+def data():
+    return jsonify(callDataService(request.json, request.args.get("query")))
 
 def callDataService(req, path):
     microServiceURL = None
@@ -94,7 +96,6 @@ def callDataService(req, path):
     #         }
     #         resp = requests.post(microServiceURL, json = req)
 
-
 def updateMembers(table, members, entry):
     table.update_item(
         Key={
@@ -108,7 +109,6 @@ def updateMembers(table, members, entry):
             "#val": "members"
         }
     )
-
 
 @app.route("/joinGroup", methods=['GET', 'POST'])
 def joinGroup():
@@ -130,7 +130,6 @@ def joinGroup():
                 members.append(username + ":" + password)
                 updateMembers(table, members, i)
                 return jsonify({"response": "User {} was added to the group {}".format(username, groupName)})
-
 
 @app.route("/leaveGroup", methods=['GET', 'POST'])
 def leaveGroup():
@@ -155,7 +154,6 @@ def leaveGroup():
             else:
                 return jsonify({"response": "Member not in group"}), 400
 
-
 @app.route("/addUser", methods=['GET', 'POST'])
 def addUser():
         
@@ -176,8 +174,6 @@ def addUser():
 
     return jsonify({"result": "true"})
 
-
-
 @app.route("/userauth", methods=['GET', 'POST'])
 def urlUserAuthenticate():
     group = authenticate(request.authorization["username"], request.authorization["password"])
@@ -186,7 +182,6 @@ def urlUserAuthenticate():
         return jsonify({"response": "false"})
     else:
         return jsonify({"response": "true"})
-
 
 def authenticate(username, password):
     cred = username + ":" + password
@@ -197,9 +192,6 @@ def authenticate(username, password):
             return group
     return None
     
-
-
-
 @app.route("/", methods=['GET', 'POST'])
 def userService():
     microServiceURL = None

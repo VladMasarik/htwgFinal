@@ -201,51 +201,52 @@ def collectResps(action, auth = None):
 
     return resp
 
+def callUserService2(action, auth = None):
+    """ Returns list of repositories. """
+    microServiceURL = None
+    if "HTWGLOCAL" in os.environ:
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
+
+    req = {
+        "action": action
+    }
+
+    if auth is None or auth["user"] is None:
+        auth = {
+            "user": "public",
+            "pass": "none"
+        }
+        req["publicAccount"] = "true"
+    else:
+        req["publicAccount"] = "false"
+
+    response = requests.post(microServiceURL, auth=(auth["user"], auth["pass"]) , json = req)
+    response = response.json()
+    return response["repositories"]
+
 def apiGithubUserLanguages(request):
     """ Returns dictionary of languages and percentages. """
     repo = request.GET.get("search_term")
-    username = request.COOKIES.get("username")
-    password = request.COOKIES.get("password")
+    username, password = authenticate(request)
     auth = {
         "user": username,
         "pass": password
     }
     action = {
-        "label": "listRepo",
+        "label": "listLanguages",
         "gitUser": repo,
     }
+    out = callUserService2(action, auth)
 
-    repos = []
-    langtoken = os.environ["GITKEY"]
-    langheader = {"Authorization": "token " + langtoken}
-    for e in collectData(action, auth):
-        langData = requests.get(
-            'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
-            headers=langheader
-        ) 
-        repoList = langData.json()
-        repos.append(repoList)
 
-    out = {}
-    for listEntry in repos:
-        for key in listEntry:
-            if key in out.keys():
-                out[key] += listEntry[key]
-            else:
-                out[key] = listEntry[key]
-
-    all = 0
-    for key in out:
-        all += out[key]
-    for key in out:
-        out[key] = ((out[key] * 10000) // all) / 100 
 
     ctx = {
        "languageList": out
     }
     return JsonResponse(ctx)
 
- 
 def apiRepoList(request):
     repo = request.GET.get("search_term")
     username = request.COOKIES.get("username")

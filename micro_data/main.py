@@ -58,6 +58,13 @@ def userRepos(gitUser):
             page += 1
     return repos
 
+def userRepoNames(user):
+    out = userRepos(user)
+    result = []
+    for e in out:
+        result.append(e["name"])
+    return result
+
 def callUserService(body, path):
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
@@ -72,6 +79,33 @@ def callUserService(body, path):
 def listGroupsForUser(username):
     return callUserService({"username": username}, "/listGroupsPerUser")
     
+def userLangs(user):
+    repos = []
+    langtoken = os.environ["GITKEY"]
+    langheader = {"Authorization": "token " + langtoken}
+    for e in userRepoNames(user):
+        langData = requests.get(
+            'https://api.github.com/repos/{}/{}/languages'.format(repo,e),
+            headers=langheader
+        ) 
+        repoList = langData.json()
+        repos.append(repoList)
+
+    out = {}
+    for listEntry in repos:
+        for key in listEntry:
+            if key in out.keys():
+                out[key] += listEntry[key]
+            else:
+                out[key] = listEntry[key]
+
+    all = 0
+    for key in out:
+        all += out[key]
+    for key in out:
+        out[key] = ((out[key] * 10000) // all) / 100 
+
+    return out
 
 def get_GitHub_Users_For_User(user):
     """
@@ -134,6 +168,18 @@ def root():
             body[gitUser] = {"repoList": userRepos(gitUser)}
             s3.put_object(Key=user, Bucket="kittyfolder", Body=json.dumps(body))
             return jsonify({"repositories": body[gitUser]["repoList"]})
+
+        elif data["action"]["label"] == "listLanguages":
+            if gitUser in githubUsers:
+                return jsonify({"repositories": githubUsers[gitUser]["langList"]})
+            body = {}
+            if len(githubUsers) is not 0:
+                body = s3.get_object(Bucket = "kittyfolder", Key=user)
+                body = json.loads(body["Body"].read().decode("utf-8")) 
+
+            body[gitUser] = {"langList": userLangs(gitUser)}
+            s3.put_object(Key=user, Bucket="kittyfolder", Body=json.dumps(body))
+            return jsonify({"repositories": body[gitUser]["langList"]})
 
     else:
         time.sleep(3)
