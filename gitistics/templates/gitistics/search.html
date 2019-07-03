@@ -39,14 +39,13 @@
   <section>
     <div id="leftpart">
       <ul>
-        <li style="color: rgb(255, 130, 108)">You've searched Github for:</li>
-        <li>&emsp;<h3>{{ data.name }}</h3>
+        <li>&emsp;<h1>{{ data.name }}</h1>
         </li>
         <br>
-        <li><img class="avatar" src="{{ data.avatar_url }}" width="200" height="200"></li>
+        <li>&emsp;<img class="avatar" src="{{ data.avatar_url }}" width="200" height="200"></li>
         <br>
-        <li style="color: rgb(255, 130, 108)">Joined GitHub on:</li>
-        <li>&emsp;<h5>{{ data.created_at }}</h5>
+        <li><h5>User joined GitHub on:</h5></li>
+        <li><h5>&emsp;{{ data.created_at }}</h5></li>
         </li>
       </ul>
     </div>
