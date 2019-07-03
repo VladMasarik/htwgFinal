@@ -24,7 +24,7 @@ spec:
         imagePullPolicy: "Always"
         resources:
           requests:
-            cpu: 100m
+            cpu: 200m
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
@@ -36,6 +36,11 @@ spec:
             secretKeyRef:
               name: aws-web
               key: aws-pass
+        - name: GITKEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-web
+              key: gitkey
         - name: AWS_DEFAULT_REGION
           value: "us-west-2"
         ports:
