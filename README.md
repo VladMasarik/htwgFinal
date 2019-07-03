@@ -87,8 +87,69 @@ oc create -f deploy/1.8+/
 
 the create autoscaler
 
-oc autoscale deploy/data --cpu-percent=20 --min=1 --max=10
-oc autoscale deploy/user --cpu-percent=20 --min=1 --max=10
-oc autoscale deploy/web --cpu-percent=20 --min=1 --max=10
+oc autoscale deploy/data --cpu-percent=75 --min=1 --max=3
+oc autoscale deploy/user --cpu-percent=75 --min=1 --max=3
+oc autoscale deploy/web --cpu-percent=90 --min=1 --max=4
 
 
+## Scala simulation
+
+```
+package computerdatabase
+
+import scala.concurrent.duration._
+
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import io.gatling.jdbc.Predef._
+
+class RecordedSimulation extends Simulation {
+
+	val httpProtocol = http
+		.baseUrl("http://web-default.apps.vmasarik-logging.devcluster.openshift.com")
+		.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+		.acceptEncodingHeader("gzip, deflate")
+		.acceptLanguageHeader("en-US,en;q=0.5")
+		.upgradeInsecureRequestsHeader("1")
+		.userAgentHeader("Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0")
+
+
+
+	// scenario("repeat")
+	// .repeat(3)( // repeat 3 times
+	// 	exec(http("google").get("https://www.example.com"))
+	// )
+
+	val scn = scenario("RecordedSimulation")
+		.repeat(2)(
+		exec(http("request_0")
+			.get("/"))
+		.pause(10)
+		.exec(http("request_1")
+			.get("/search?search_term=kubernetes"))
+		.pause(8)
+		.exec(http("request_2")
+			.get("/"))
+		.pause(7)
+		.exec(http("request_3")
+			.get("/profile"))
+		.pause(5)
+		.exec(http("request_4")
+			.get("/"))
+		.pause(4)
+		.exec(http("request_5")
+			.get("/logout/"))
+		.pause(2)
+		.exec(http("request_6")
+			.get("/login/"))
+		.pause(5)
+		.exec(http("request_7")
+			.post("/login/")
+			.formParam("csrfmiddlewaretoken", "gpeCyctgZrpigSXKrne4vRXEEu66G9wb4SCqTt5wOcv6quRaDMIKBr82c6JjpYR1")
+			.formParam("username", "j")
+			.formParam("password", "j")))
+
+
+	setUp(scn.inject(atOnceUsers(1), rampUsers(50) during (100.seconds))).protocols(httpProtocol)
+}
+```
