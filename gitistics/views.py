@@ -75,6 +75,7 @@ def profile(request):
         # /joinGroup?group{{group}}">join</p><p href="/leaveGroup?group{{group}}
         resp = callUserService({"user": username}, "/userDetail")
         ctx = {
+            'user': username,
             "groupList": callUserService({}, "/listGroups"),
             "billing": {
                 "read": resp["read"],
@@ -143,34 +144,8 @@ def userlogin(request):
     else:
         return render(request, 'gitistics/login.html', {})
 
-########### todo
-def statistics(request):
-    token = "e75afd5f63d505a78237cfa3b3169d9256824a16"
-    header = {"Authorization": "token " + token}
-    userData = requests.get('https://api.github.com/users/VladMasarik', headers=header)
-    dataList = []
-    dataList.append(userData.json())
-    cleanedData = []
-    userStats = {}
-    for data in dataList:
-        userStats['name'] = data['name']
-        userStats['email'] = data['email']
-        userStats['public_repos'] = data['public_repos']
-        userStats['avatar_url'] = data['avatar_url']
-        userStats['followers'] = data['followers']
-        userStats['following'] = data['following']
-        userStats['location'] = data['location']
-        userStats['created_at'] = data['created_at']
-        userStats['updated_at'] = data['updated_at']
-    cleanedData.append(userStats)
-
-    return render(request, 'gitistics/statistics.html', {'data': userStats})
-########### todo
-
 def collectData(action, auth = None):
-    """
-    Returns list of repositories.
-    """
+    """ Returns list of repositories. """
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
@@ -199,7 +174,34 @@ def collectData(action, auth = None):
 
     return names
 
+def collectResps(action, auth = None):
+    """ Returns repositories. """
+    microServiceURL = None
+    if "HTWGLOCAL" in os.environ:
+        microServiceURL = "http://localhost:5000"
+    else:
+        microServiceURL = "http://user.default.svc.cluster.local"
+
+    req = {
+        "action": action
+    }
+
+    if auth is None or auth["user"] is None:
+        auth = {
+            "user": "public",
+            "pass": "none"
+        }
+        req["publicAccount"] = "true"
+    else:
+        req["publicAccount"] = "false"
+
+    response = requests.post(microServiceURL, auth=(auth["user"], auth["pass"]) , json = req)
+    resp = response.json()
+
+    return resp
+
 def apiGithubUserLanguages(request):
+    """ Returns dictionary of languages and percentages. """
     repo = request.GET.get("search_term")
     username = request.COOKIES.get("username")
     password = request.COOKIES.get("password")
@@ -235,8 +237,7 @@ def apiGithubUserLanguages(request):
     for key in out:
         all += out[key]
     for key in out:
-        out[key] = ((out[key] * 10000) // all) / 100 # Real number representing percentage in form 3.32
-    #return out   # Dictionary with a language and a percentage
+        out[key] = ((out[key] * 10000) // all) / 100 
 
     ctx = {
        "languageList": out
@@ -260,7 +261,7 @@ def apiRepoList(request):
     if repo is not None:
 
         ctx = {
-        'list': collectData(action, auth)
+        'list': collectResps(action, auth)
         }
         return JsonResponse(ctx)
     return JsonResponse({"list": ["one","two","three"]})
@@ -299,8 +300,7 @@ def search(request):
 
         ctx = {
         'user': username,
-        'data': userData.json(),
-        'repoList': collectData(action, auth)
+        'data': userData.json()
         }
         return render(request, 'gitistics/search.html', context=ctx)
 

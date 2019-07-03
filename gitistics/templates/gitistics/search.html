@@ -39,14 +39,13 @@
   <section>
     <div id="leftpart">
       <ul>
-        <li style="color: rgb(255, 130, 108)">You've searched Github for:</li>
-        <li>&emsp;<h3>{{ data.name }}</h3>
+        <li>&emsp;<h1>{{ data.name }}</h1>
         </li>
         <br>
-        <li><img class="avatar" src="{{ data.avatar_url }}" width="200" height="200"></li>
+        <li>&emsp;<img class="avatar" src="{{ data.avatar_url }}" width="200" height="200"></li>
         <br>
-        <li style="color: rgb(255, 130, 108)">Joined GitHub on:</li>
-        <li>&emsp;<h5>{{ data.created_at }}</h5>
+        <li><h5>User joined GitHub on:</h5></li>
+        <li><h5>&emsp;{{ data.created_at }}</h5></li>
         </li>
       </ul>
     </div>
@@ -57,57 +56,69 @@
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-red w3-padding-16">
             <i class="fa fa-comment w3-xxxlarge"></i>
+            {% if data %}
             <h3>{{ data.public_repos}}</h3>
+            {% else %}
+            <h3>0</h3>
+            {% endif %}
             <p>Repositories</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-green w3-text-white w3-padding-16">
             <i class="fa fa-user w3-xxxlarge"></i>
+            {% if data %}
             <h3>{{ data.following }}</h3>
+            {% else %}
+            <h3>0</h3>
+            {% endif %}
             <p>Following</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-pink w3-text-white w3-padding-16">
             <i class="fa fa-users w3-xxxlarge"></i>
+            {% if data %}
             <h3>{{ data.followers }}</h3>
+            {% else %}
+            <h3>0</h3>
+            {% endif %}
             <p>Followers</p>
+          </div>
+        </div>
+        <div class="w3-quarter" style="padding: 5px">
+          <div class="w3-container w3-indigo w3-text-white w3-padding-16">
+            <i class="fa fa-code-fork w3-xxxlarge"></i>
+            <h3 id="showNoOfForks">0</h3>
+            <p>Forks</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-orange w3-text-white w3-padding-16">
             <i class="fa fa-language w3-xxxlarge"></i>
-            <h3 id="showNoOfLangs"></h3>
+            <h3 id="showNoOfLangs">0</h3>
             <p>Languages</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-blue w3-padding-16">
             <i class="fa fa-tasks w3-xxxlarge"></i>
-            <h3>{{ issues.length }}</h3>
+            <h3 id="showNoOfIssues">0</h3>
             <p>Issues</p>
-          </div>
-        </div>
-        <div class="w3-quarter" style="padding: 5px">
-          <div class="w3-container w3-teal  w3-padding-16">
-            <i class="fa fa-star w3-xxxlarge"></i>
-            <h3>{{ total_stars }}</h3>
-            <p>Stars</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
           <div class="w3-container w3-lime w3-text-white w3-padding-16">
             <i class="fa fa-eye w3-xxxlarge"></i>
-            <h3>{{ repo.watchers_count }}</h3>
+            <h3 id="showNoOfWatchers">0</h3>
             <p>Watch</p>
           </div>
         </div>
         <div class="w3-quarter" style="padding: 5px">
-          <div class="w3-container w3-indigo w3-text-white w3-padding-16">
-            <i class="fa fa-code-fork w3-xxxlarge"></i>
-            <h3>{{ repo.forks_count }}</h3>
-            <p>Forks</p>
+          <div class="w3-container w3-teal  w3-padding-16">
+            <i class="fa fa-star w3-xxxlarge"></i>
+            <h3 id="showNoOfStars">0</h3>
+            <p>Stars</p>
           </div>
         </div>
       </div>

@@ -27,36 +27,44 @@
     <h1 class="w3-margin w3-jumbo">GITISTICS</h1>
   </header>
 
-  <div class="w3-row w3-center w3-dark-grey w3-padding-16">
-    <h1>Group manager.</h1>
+  <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">User profile for: {{ user }}</h1>
   </div>
 
-  <h3>Registered users:</h3>
+  <!-- TODO -->
+  <h3>Billing:</h3>
+  <p>&emsp;You've spent: {{ billing.amount }}</p>
+  <p>&emsp;You're usage is: {{ billing.amount }}</p>
+  <p>&emsp;&emsp;Reads: {{ billing.amount }}</p>
+  <p>&emsp;&emsp;Writes: {{ billing.amount }}</p>
+  <!-- TODO -->
+
+  <h3>Groups:</h3>
   <br>
-    <table id="userstable" class="center">
-      {% for group in groupList %}
-      <tr>
-        <td>
-          {{group}}
-        </td>
-        <td style="text-align: center">
-          <form action="/joinGroup?group={{group}}" method="get">
-            <input type="submit" value="Join">
-          </form>
-        </td>
-        <td style="text-align: center">
-          <form action="/leaveGroup?group={{group}}" method="get">
-            <input type="submit" value="Leave">
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-    <br>
-    <br>
-  
+  <table id="userstable" class="center">
+    {% for group in groupList %}
+    <tr>
+      <td>
+        {{group}}
+      </td>
+      <td style="text-align: center">
+        <form action="/joinGroup?group={{group}}" method="get">
+          <input type="submit" value="Join">
+        </form>
+      </td>
+      <td style="text-align: center">
+        <form action="/leaveGroup?group={{group}}" method="get">
+          <input type="submit" value="Leave">
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <br>
+  <br>
+
   <div class="w3-row w3-center w3-dark-grey w3-padding-16">
-    <p> You are logged in as: {{ user.username }} </p>
+    <p> You are logged in as: {{ user }} </p>
   </div>
 
   <footer class="w3-container w3-padding-64 w3-center w3-opacity">
