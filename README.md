@@ -64,6 +64,7 @@ Be in the root of this project and `python3 manage.py test && pytest -v`
 `kubectl set image deployment/my-deployment <container>=<image>:<new-version>`
 `oc set image deploy/data data=VladMasarik/htwg`
 
+oc get deployment web -o=jsonpath='{.spec.template.spec.containers[].image}'
 
 oc set image deploy/data data=vladmasarik/htwg-data
 oc set image deploy/user user=vladmasarik/htwg-user

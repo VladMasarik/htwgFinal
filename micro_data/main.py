@@ -38,7 +38,20 @@ def userRepos(gitUser):
             headers=header
         )
         repoList = response.json()
+
+        # Choose only data that interests us
+        # interesting = {}
+        # for reduntantRepoData in repoList:
+        #     interesting['name'] = reduntantRepoData['name']
+        #     interesting['public_repos'] = reduntantRepoData['public_repos']
+        #     interesting['avatar_url'] = reduntantRepoData['avatar_url']
+        #     interesting['followers'] = reduntantRepoData['followers']
+        #     interesting['following'] = reduntantRepoData['following']
+        #     interesting['created_at'] = reduntantRepoData['created_at']
+        # repos = repos + interesting
+
         repos = repos + repoList
+
         if len(repoList) < 30:
             page = 0
         else:
@@ -112,9 +125,11 @@ def root():
             if gitUser in githubUsers:
                 return jsonify({"repositories": githubUsers[gitUser]["repoList"]})
             body = {}
+
             if len(githubUsers) is not 0:
                 body = s3.get_object(Bucket = "kittyfolder", Key=user)
                 body = json.loads(body["Body"].read().decode("utf-8")) 
+
             body[gitUser] = {"repoList": userRepos(gitUser)}
             s3.put_object(Key=user, Bucket="kittyfolder", Body=json.dumps(body))
             return jsonify({"repositories": body[gitUser]["repoList"]})

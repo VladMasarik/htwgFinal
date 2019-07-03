@@ -23,7 +23,13 @@ spec:
         imagePullPolicy: "Always"
         resources:
           requests:
-            cpu: 100m
+            cpu: 200m
+        env:
+        - name: GITKEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-web
+              key: gitkey
         image: vladmasarik/htwg-web:latest
         ports:
         - containerPort: 8080
