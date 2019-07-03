@@ -47,6 +47,9 @@ def leaveGroup(request):
     return HttpResponseRedirect("/profile")
 
 def callUserService(data, path):
+    """
+    Call service and return its body as JSON
+    """
     microServiceURL = None
     if "HTWGLOCAL" in os.environ:
         microServiceURL = "http://localhost:5000"
@@ -70,8 +73,13 @@ def profile(request):
 
     if username is not None:
         # /joinGroup?group{{group}}">join</p><p href="/leaveGroup?group{{group}}
+        resp = callUserService({"user": username}, "/userDetail")
         ctx = {
-            "groupList": callUserService({}, "/listGroups")
+            "groupList": callUserService({}, "/listGroups"),
+            "billing": {
+                "read": resp["read"],
+                "write": resp["write"]
+            }
         }
         
         return render(request, "gitistics/profile.html", context=ctx)

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import boto3, requests, os, json, logging
+import boto3, requests, os, json, logging, time
 app = Flask(__name__)
 
 
@@ -123,9 +123,10 @@ def root():
         if data["action"]["label"] == "listRepo":
 
             if gitUser in githubUsers:
+                callUserService({"group": user, "write": 0, "read": 1}, "/addUsage")
                 return jsonify({"repositories": githubUsers[gitUser]["repoList"]})
             body = {}
-
+            callUserService({"group": user, "write": 1, "read": 0}, "/addUsage")
             if len(githubUsers) is not 0:
                 body = s3.get_object(Bucket = "kittyfolder", Key=user)
                 body = json.loads(body["Body"].read().decode("utf-8")) 
@@ -135,4 +136,5 @@ def root():
             return jsonify({"repositories": body[gitUser]["repoList"]})
 
     else:
+        time.sleep(3)
         return jsonify({"repositories": userRepos(gitUser)})

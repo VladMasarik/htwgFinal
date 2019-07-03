@@ -14,6 +14,42 @@ def listGroups():
         groupNames.append(i["name"])
     return jsonify(groupNames)
 
+@app.route("/userDetail", methods=['GET', 'POST'])
+def userDetail():
+    table = getDynamo()
+    data = request.json
+    for i in table.scan()["Items"]:
+        if i["name"] == data["user"]:
+            return jsonify({"reads": i["reads"], "writes": i["writes"]})
+    print("Did not find user")
+    return jsonify({"reads": 0, "writes": 0})
+            
+
+@app.route("/addUsage", methods=['GET', 'POST'])
+def addUsage():
+    table = getDynamo()
+    data = request.json
+    group = data["group"]
+    write = data["write"]
+    read = data["read"]
+    for i in table.scan()["Items"]:
+        if i["name"] == group:
+            table.update_item(
+                Key={
+                    "name": i["name"]
+                },
+                UpdateExpression='SET #val = #val + :val, #val1 = #val1 + :val1',
+                ExpressionAttributeValues={
+                    ":val": write,
+                    ":val1": read
+                },
+                ExpressionAttributeNames={
+                    "#val": "writes",
+                    "#val1": "reads"
+                }
+            )
+            return jsonify({"response": "Group {} reads or writes was increased.".format(group)})
+
 
 @app.route("/listGroupsPerUser", methods=['GET', 'POST'])
 def listGroupsPerUser():
@@ -128,7 +164,9 @@ def addUser():
         Item={
             "name": request.authorization["username"],
             "members": [cred],
-            "data": {}
+            "data": {},
+            "reads": 0,
+            "writes": 0
         }
     )
 
