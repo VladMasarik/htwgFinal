@@ -1,37 +1,92 @@
 from django.shortcuts import render, HttpResponse
-import requests
+import requests, json
 from django.views import View
-from .getfromgithub import SearchRepositories, SearchCommits
 
-class IndexView(View):
+
     
-    template_name = 'gitistics/index.html'
+NUMBER_OF_REPOS = 5
+template_name = 'gitistics/index.html'
+    
 
-    def get(self, request, *args, **kwargs):
-        search_term = self.request.GET.get('search_term', None)
-        if search_term == '':
+class Group():
+    users = None
+
+class User():
+    name = None
+    password = None
+
+class Repo():
+    name = None
+
+
+
+
+def getTable():
+    db = boto3.resource('dynamodb')
+    return db.Table('groups')
+
+def getItem(id):
+    response = table.get_item(Key={'iddd': int(id)})
+    return response['Item']
+
+def upload():
+    table.put_item(
+                Item={
+                    "iddd" : num,
+                    'name': form.cleaned_data["name"],
+                    'size': form.cleaned_data["size"],
+                    'color': form.cleaned_data["color"],
+                    'url': image.name,
+                }
+            )
+
+def getRepositories(repo):
+    response = requests.get(('https://api.github.com/search/repositories?q={}').format(repo))
+    resp_dict = json.loads(response.content.decode('utf-8'))
+    #get items only and order by created_at desc
+    resp_dict['items'] = sorted(resp_dict['items'], key=lambda x:x['created_at'], reverse=True)
+
+    repos = resp_dict['items'][:NUMBER_OF_REPOS]
+    return repos
+
+
+def getLastCommit(repo):
+    response = requests.get(('https://api.github.com/repos/{}/{}/commits').format(repo['owner']['login'],repo['name']))
+    all_commits = json.loads(response.content.decode('utf-8'))
+    #slice to one last commmit
+    one_commit = all_commits[:1]
+
+    return one_commit[0]
+
+
+def get(request):
+        repository = request.GET.get("repository")
+        if repository in ['', None]:
             context = {
-                'search_term': search_term,
+                'search_term': repository,
                 'data': None,
             }
-            return render(request, self.template_name, context)
+            return render(request, template_name, context)
         else:
-            repos = SearchRepositories(search_term).get_from_github()
-            commits = SearchCommits(repos).get_from_github()
+            repos = getRepositories(repository)
+            commits = getLastCommit(repos)
             data = zip(repos, commits)
             context = {
-                'search_term': search_term,
+                'search_term': repository,
                 'data': data,
             }
-            return render(request, self.template_name, context)
+            return render(request, template_name, context)
+
 
 #Take2
 def index(request):
     repository = request.GET.get("repository")
     if repository is None:
-        return render(request, 'gitistics/index.html', {'data': None})
+        x = render(request, 'gitistics/index.html', {'data': None})
+        x.set_cookie("sess", "kye")
+        return x
     userData = requests.get('https://api.github.com/users/{}'.format(repository))
-    
+
     dataList = []
     dataList.append(userData.json())
     cleanedData = []
